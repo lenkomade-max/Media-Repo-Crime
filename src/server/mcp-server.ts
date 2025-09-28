@@ -166,8 +166,8 @@ app.get("/mcp/status/:id", (req, res) => {
   res.json(job);
 });
 
-const PORT = process.env.PORT || 5123;
-const HOST = "0.0.0.0";
+const PORT = Number(process.env.PORT || 5123); // явно приводим к number
+const HOST = '0.0.0.0';
 app.listen(PORT, HOST, () => {
   console.log(`MCP server listening on ${HOST}:${PORT}`);
 });
