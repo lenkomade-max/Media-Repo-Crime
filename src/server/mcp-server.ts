@@ -78,6 +78,7 @@ app.get("/mcp/sse", (req, res) => {
     if (i >= 0) clients.splice(i, 1);
     res.end();
   });
+});
 
 // инструмент media-video
 app.post("/mcp/tools/media-video", express.json({ limit: "20mb" }), async (req, res) => {
