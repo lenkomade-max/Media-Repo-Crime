@@ -1,0 +1,160 @@
+    await this.processJob(input, id, jobDir);
+  }
+
+  private resolveDuration(index: number, input: PlanInput) {
+    for (const r of input.ranges ?? []) {
+      if (index >= r.fromIndex && index <= r.toIndex) return r.durationSec;
+    }
+    return input.durationPerPhoto ?? 3;
+  }
+
+  private async processJob(input: PlanInput, id: string, jobDir: string) {
+    this.jobs.set(id, { status: "processing", error: null, outputPath: null, createdAt: Date.now(), updatedAt: Date.now() });
+    try {
+      await fs.ensureDir(jobDir);
+
+      // 1) Prepare parts: convert images to video clips, normalize videos
+      const parts: string[] = [];
+      for (let i = 0; i < input.files.length; i++) {
+        const src = input.files[i];
+        const abs = path.isAbsolute(src) ? src : path.join(this.dataDir, src);
+        const ext = path.extname(abs).toLowerCase();
+        const duration = this.resolveDuration(i, input);
+        const outPart = path.join(jobDir, `part_${String(i).padStart(3, "0")}.mp4`);
+        if ([".jpg", ".jpeg", ".png", ".webp"].includes(ext)) {
+          // image -> video
+          await runFFmpeg(["-y","-loop","1","-t",String(duration),"-i",abs,"-vf",`scale=${input.width}:${input.height}:force_original_aspect_ratio=decrease,pad=${input.width}:${input.height}:(ow-iw)/2:(oh-ih)/2:color=black`,"-r",String(input.fps),"-c:v","libx264","-pix_fmt","yuv420p",outPart]);
+        } else {
+          // video -> normalize and trim/pad to duration
+          const norm = path.join(jobDir, `norm_${i}.mp4`);
+          await runFFmpeg(["-y","-i",abs,"-vf",`scale=${input.width}:${input.height}:force_original_aspect_ratio=decrease,pad=${input.width}:${input.height}:(ow-iw)/2:(oh-ih)/2:color=black`,"-r",String(input.fps),"-c:v","libx264","-pix_fmt","yuv420p",norm]);
+          // trim / extend
+          await runFFmpeg(["-y","-i",norm,"-t",String(duration),"-c","copy",outPart]);
+        }
+        parts.push(outPart);
+      }
+
+      // 2) create concat file and merge
+      const listFile = path.join(jobDir, "list.txt");
+      const listContent = parts.map(p => `file '${p.replace(/'/g,"'\\''")}'`).join("\n");
+      await fs.writeFile(listFile, listContent, "utf-8");
+      const merged = path.join(jobDir, "merged.mp4");
+      await runFFmpeg(["-y","-f","concat","-safe","0","-i",listFile,"-c:v","libx264","-pix_fmt","yuv420p","-r",String(input.fps),merged]);
+
+      // 3) apply effects & overlays
+      const fxOut = path.join(jobDir, "fx_out.mp4");
+      // simple pass-through for now (effects can be added into filter chain)
+      await runFFmpeg(["-y","-i",merged,"-c","copy",fxOut]);
+
+      if (input.overlayTop) await OverlayRenderer.apply(fxOut, input.overlayTop);
+      if (input.overlayBottom) await OverlayRenderer.apply(fxOut, input.overlayBottom);
+
+      // 4) audio: voiceover + music mixing (if voiceover provided, synthesize)
+      let voicePath: string | undefined = undefined;
+      if (input.voiceover?.text) {
+        voicePath = await this.synthesizeVoice({
+          text: input.voiceover.text,
+          voice: input.voiceover.voice ?? "alloy",
+          language: input.voiceover.language ?? "ru",
+          sampleRate: input.voiceover.sampleRate ?? 24000,
+          format: input.voiceover.format ?? "mp3"
+        });
+      }
+
+      const finalWithAudio = path.join(jobDir, "final_with_audio.mp4");
+      if (voicePath || input.music) {
+        const args: string[] = ["-y", "-i", fxOut];
+        if (voicePath) args.push("-i", voicePath);
+        if (input.music) args.push("-i", path.isAbsolute(input.music) ? input.music : path.join(this.dataDir, input.music));
+        // build filter for amix if 2 audio inputs
+        if ((voicePath ? 1 : 0) + (input.music ? 1 : 0) === 0) {
+          await runFFmpeg(["-y","-i",fxOut,"-c","copy",finalWithAudio]);
+        } else if ((voicePath ? 1 : 0) + (input.music ? 1 : 0) === 1) {
+          // map video + the one audio
+          const mapArgs = ["-map","0:v:0","-map","1:a:0","-c:v","copy","-c:a","aac",finalWithAudio];
+          await runFFmpeg(args.concat(mapArgs));
+        } else {
+          // two audios -> amix voice louder, music softer
+          const filter = "[1:a]volume=1.0[a1];[2:a]volume=0.25[a2];[a1][a2]amix=inputs=2:duration=first:dropout_transition=2[aout]";
+          const full = args.concat(["-filter_complex", filter, "-map", "0:v:0", "-map", "[aout]", "-c:v", "copy", "-c:a", "aac", finalWithAudio]);
+          await runFFmpeg(full);
+        }
+      } else {
+        await fs.copyFile(fxOut, finalWithAudio);
+      }
+
+      // 5) subtitles burn if requested
+      let finalOut = path.join(this.outDir, `media_${id}.mp4`);
+      if (input.burnSubtitles) {
+        if (input.subtitles?.items?.length) {
+          const srtPath = path.join(jobDir, "subs.srt");
+          const items = input.subtitles.items;
+          const srt = items.map((it, idx) => `${idx+1}\n${SubtitleRenderer.formatTime(it.startSec)} --> ${SubtitleRenderer.formatTime(it.endSec)}\n${it.text}\n`).join("\n");
+          await fs.writeFile(srtPath, srt, "utf-8");
+          await runFFmpeg(["-y","-i",finalWithAudio,"-vf",`subtitles=${srtPath}:force_style='FontName=DejaVu Sans,FontSize=24'`,"-c:v","libx264","-c:a","copy",finalOut]);
+        } else if (voicePath) {
+          const res = await this.generateSubtitles({ audioPath: voicePath });
+          const srtPath = path.join(jobDir, "auto_subs.srt");
+          const srt = res.map((it, idx) => `${idx+1}\n${SubtitleRenderer.formatTime(it.startSec)} --> ${SubtitleRenderer.formatTime(it.endSec)}\n${it.text}\n`).join("\n");
+          await fs.writeFile(srtPath, srt, "utf-8");
+          await runFFmpeg(["-y","-i",finalWithAudio,"-vf",`subtitles=${srtPath}:force_style='FontName=DejaVu Sans,FontSize=24'`,"-c:v","libx264","-c:a","copy",finalOut]);
+        } else {
+          await fs.copyFile(finalWithAudio, finalOut);
+        }
+      } else {
+        await fs.copyFile(finalWithAudio, finalOut);
+      }
+
+      this.jobs.set(id, { status: "ready", error: null, outputPath: finalOut, createdAt: Date.now(), updatedAt: Date.now() });
+    } catch (err: any) {
+      logger.error("processJob error", err);
+      const rec = this.jobs.get(id);
+      if (rec) rec.status = "failed";
+      this.jobs.set(id, { status: "failed", error: String(err), outputPath: null, createdAt: Date.now(), updatedAt: Date.now() });
+    }
+  }
+
+  // TTS using OpenAI / OpenRouter (simple fetch wrapper)
+  async synthesizeVoice({ text, voice, language, sampleRate, format }: { text: string, voice: string, language: string, sampleRate: number, format: "mp3"|"wav"|"ogg" }) {
+    const out = path.join(this.tmpDir, `tts_${Date.now()}.${format}`);
+    const key = process.env.OPENAI_API_KEY;
+    if (!key) throw new Error("OPENAI_API_KEY not set");
+    // Use OpenRouter or OpenAI path from env
+    const base = process.env.OPENAI_BASE_URL ?? "https://api.openai.com/v1";
+    // Using POST to /audio/speech is provider-specific; we try openai-compatible route if available
+    // We'll use curl via execa to keep simple and avoid multipart in pure node here
+    // Note: for production switch to SDK HTTP client and correct API shape
+    const curlArgs = [
+      "-s", "-X", "POST",
+      `${base}/audio/speech`,
+      "-H", `Authorization: Bearer ${key}`,
+      "-H", "Content-Type: application/json",
+      "-d", JSON.stringify({ model: "gpt-4o-mini-tts", voice, input: text, format }),
+      "--output", out
+    ];
+    // run via execa through sh for curl (we have curl in container)
+    await runFFmpeg(["-y"]); // noop to ensure runFFmpeg function loaded (no-op)
+    const { execa } = await import("execa");
+    const res = await execa("curl", curlArgs);
+    if (res.exitCode !== 0) throw new Error("TTS failed");
+    return out;
+  }
+
+  // STT/Whisper simple wrapper (calls OpenAI transcription endpoint)
+  async generateSubtitles({ audioPath }: { audioPath: string }) {
+    const key = process.env.OPENAI_API_KEY;
+    if (!key) throw new Error("OPENAI_API_KEY not set");
+    const base = process.env.OPENAI_BASE_URL ?? "https://api.openai.com/v1";
+    // Use curl multipart/form-data to upload
+    const outJson = path.join(this.tmpDir, `stt_${Date.now()}.json`);
+    const { execa } = await import("execa");
+    const curlArgs = ["-s", "-X", "POST", `${base}/audio/transcriptions`, "-H", `Authorization: Bearer ${key}`, "-F", `file=@${audioPath}`, "-F", "model=whisper-1"];
+    const res = await execa("curl", curlArgs);
+    if (res.exitCode !== 0) throw new Error("STT failed");
+    const data = JSON.parse(res.stdout);
+    // map segments if present
+    const segments = (data.segments ?? []).map((s: any) => ({ startSec: s.start, endSec: s.end, text: s.text?.trim() ?? "" }));
+    await fs.writeJSON(outJson, segments, { spaces: 2 });
+    return segments;
+  }
+}

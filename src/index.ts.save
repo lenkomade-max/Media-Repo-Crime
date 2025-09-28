@@ -1,0 +1,67 @@
+import express, { Request, Response } from "express";
+import bodyParser from "body-parser";
+import { createMedia } from "./pipeline/MediaCreator";
+
+const app = express();
+app.use(bodyParser.json());
+
+const PORT = process.env.PORT || 4123;
+
+// Health check
+app.get("/health", (_req: Request, res: Response) => {
+  res.json({ status: "ok" });
+});
+
+// MCP endpoint
+app.get("/mcp/sse", (_req: Request, res: Response) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  const tools = [
+    {
+      name: "media-video",
+      description: "Собрать видео из фото/видео/музыки",
+      inputSchema: {
+        type: "object",
+        properties: {
+          files: { type: "array", items: { type: "string" } },
+          music: { type: "string" }
+        },
+        required: ["files", "music"]
+      },
+      outputSchema: {
+        type: "object",
+        properties: {
+          video: { type: "string" }
+        }
+      }
+    }
+  ];
+
+  res.write(`data: ${JSON.stringify({ type: "tools", data: tools })}\n\n`);
+});
+
+// MCP messages
+app.post("/mcp/messages", async (req: Request, res: Response) => {
+  const body = req.body;
+
+  if (body.type === "callTool" && body.toolName === "media-video") {
+    const { files, music } = body.params;
+    const output = "final.mp4";
+
+    try {
+      createMedia(files, music, output);
+      res.json({ video: output });
+    } catch (err) {
+      console.error("Ошибка при создании видео:", err);
+      res.status(500).json({ error: "Ошибка при создании видео" });
+    }
+  } else {
+    res.status(400).json({ error: "Invalid request" });
+  }
+});
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`✅ media-video-maker with MCP listening on port ${PORT}`);
+});
