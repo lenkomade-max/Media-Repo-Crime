@@ -1,6 +1,5 @@
 import express from "express";
 import MediaCreator from "./pipeline/MediaCreator.js";
-import { attachMcpRoutes } from "./server/mcp.js";
 
 const app = express();
 const media = new MediaCreator();
@@ -23,8 +22,6 @@ app.get("/api/status/:id", (req, res) => {
   res.json(status);
 });
 
-// MCP API (JSON + SSE)
-attachMcpRoutes(app, media);
 
 const PORT = process.env.PORT || 4123;
 app.listen(PORT, () => {
