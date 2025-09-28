@@ -95,13 +95,15 @@ export default class MediaCreator {
     if (hasMusic) args.push("-i", path.resolve(input.music!));
     if (hasVoice) args.push("-i", voicePath!);
 
-    const { filter, finalLabel } = buildAudioFilter({
+    const { chain, finalLabel } = buildAudioFilter({
       hasMusic,
       hasVoice,
       musicVolumeDb: input.musicVolumeDb ?? -6,
       ducking: input.ducking,
+      musicInLabel: hasMusic ? "[1:a]" : "",
+      voiceInLabel: hasVoice ? "[2:a]" : "",
     });
-    if (filter) args.push("-filter_complex", filter);
+    if (chain) args.push("-filter_complex", chain);
 
     if (input.burnSubtitles && srtPath) {
       args.push("-vf", `subtitles='${srtPath.replace(/:/g, "\\:")}'`);

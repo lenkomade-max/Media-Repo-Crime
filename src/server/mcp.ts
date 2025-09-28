@@ -26,18 +26,20 @@ function sendEvent(type: string, payload: unknown) {
 export function attachMcpRoutes(app: express.Express, media: MediaCreator) {
   // SSE
   app.get("/mcp/sse", (req, res) => {
-    res.writeHead(200, {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
-      Connection: "keep-alive",
-    });
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache, no-transform");
+    res.setHeader("Connection", "keep-alive");
+    res.setHeader("X-Accel-Buffering", "no"); // для nginx/traefik
+    res.setHeader("Access-Control-Allow-Origin", "*"); // CORS
     res.write("retry: 10000\n\n");
+    res.flushHeaders?.();
 
     const id = Date.now();
     console.log("MCP SSE: client", id, "connected");
 
     const heartbeat = setInterval(() => {
-      res.write(`: ping ${Date.now()}\n\n`);
+      if (!res.writableEnded)
+        res.write(`: ping ${Date.now()}\n\n`);
     }, 15000);
 
     clients.push({ id, res, heartbeat });
