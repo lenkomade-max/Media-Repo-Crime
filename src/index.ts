@@ -68,37 +68,32 @@ app.get("/api/status/:id", (req, res) => {
 const PORT = Number(process.env.PORT) || 4123;
 const HOST = "0.0.0.0";
 
-// Делаем простой и надежный запуск сервера
-try {
-  const server = app.listen(PORT, HOST);
-
-  server.on("error", (err) => {
-    log.error(`Ошибка запуска сервера: ${err}`);
-    process.exit(1);
-  });
-
-  server.on("listening", () => {
-    log.info(`Media Video Maker запущен на ${HOST}:${PORT}`);
-  });
-
-  // Graceful shutdown
-  process.on("SIGTERM", () => {
-    log.info("Получен сигнал завершения SIGTERM");
-    server.close(() => {
-      log.info("Сервер остановлен");
-      process.exit(0);
-    });
-  });
-
-  process.on("SIGINT", () => {
-    log.info("Получен сигнал завершения SIGINT");
-    server.close(() => {
-      log.info("Сервер остановлен");
-      process.exit(0);
-    });
-  });
-
-} catch (err) {
-  log.error(`Критическая ошибка при запуске: ${err}`);
+// Настраиваем сервер
+const server = app.listen(PORT, HOST, () => {
+  log.info(`Media Video Maker пытается запуститься на ${HOST}:${PORT}`);
+})
+.on("error", (err) => {
+  log.error(`Ошибка запуска сервера: ${err}`);
   process.exit(1);
-}
+})
+.on("listening", () => {
+  const addr = server.address();
+  log.info(`Media Video Maker успешно слушает ${typeof addr === 'string' ? addr : JSON.stringify(addr)}`);
+});
+
+// Graceful shutdown
+process.on("SIGTERM", () => {
+  log.info("Получен сигнал завершения SIGTERM");
+  server.close(() => {
+    log.info("Сервер остановлен");
+    process.exit(0);
+  });
+});
+
+process.on("SIGINT", () => {
+  log.info("Получен сигнал завершения SIGINT");
+  server.close(() => {
+    log.info("Сервер остановлен");
+    process.exit(0);
+  });
+});
