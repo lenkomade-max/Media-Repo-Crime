@@ -68,14 +68,55 @@ app.get("/api/status/:id", (req, res) => {
 const PORT = Number(process.env.PORT) || 4123;
 const HOST = "0.0.0.0";
 
-// Явный промис для отслеживания ошибок запуска
-const server = app.listen(PORT, HOST)
-  .on("error", (err) => {
-    log.error(`Ошибка запуска сервера: ${err}`);
+// Обработка закрытия процесса
+process.on("SIGINT", () => {
+  log.info("Получен сигнал завершения, закрываем сервер...");
+  process.exit(0);
+});
+
+process.on("uncaughtException", (err) => {
+  log.error("Неотловленная ошибка:", err);
+  process.exit(1);
+});
+
+// Запуск сервера с обработкой ошибок
+const startServer = () => {
+  try {
+    const server = app.listen(PORT, HOST);
+
+    server.on("error", (err) => {
+      log.error(`Ошибка запуска сервера: ${err}`);
+      process.exit(1);
+    });
+
+    server.on("listening", () => {
+      const addr = server.address();
+      if (!addr) {
+        log.error("Не удалось получить адрес сервера");
+        process.exit(1);
+      }
+      log.info(`Media Video Maker запущен на ${HOST}:${PORT}`);
+    });
+
+    // Проверяем доступность порта
+    server.once("listening", () => {
+      const testConnection = () => {
+        const http = require("http");
+        const req = http.get(`http://${HOST}:${PORT}/api/ping`, (res: any) => {
+          log.info(`Сервер успешно отвечает на ping (код ${res.statusCode})`);
+        });
+        req.on("error", (err: Error) => {
+          log.error(`Ошибка проверки соединения: ${err.message}`);
+        });
+      };
+      setTimeout(testConnection, 1000);
+    });
+
+    return server;
+  } catch (err) {
+    log.error(`Критическая ошибка при запуске: ${err}`);
     process.exit(1);
-  })
-  .on("listening", () => {
-    const addr = server.address();
-    const actualPort = typeof addr === "string" ? addr : addr?.port;
-    log.info(`Media Video Maker запущен на ${HOST}:${actualPort}`);
-  });
+  }
+};
+
+startServer();
