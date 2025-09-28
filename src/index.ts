@@ -68,6 +68,14 @@ app.get("/api/status/:id", (req, res) => {
 const PORT = Number(process.env.PORT) || 4123;
 const HOST = "0.0.0.0";
 
-app.listen(PORT, HOST, () => {
-  log.info(`Media Video Maker запущен на ${HOST}:${PORT}`);
-});
+// Явный промис для отслеживания ошибок запуска
+const server = app.listen(PORT, HOST)
+  .on("error", (err) => {
+    log.error(`Ошибка запуска сервера: ${err}`);
+    process.exit(1);
+  })
+  .on("listening", () => {
+    const addr = server.address();
+    const actualPort = typeof addr === "string" ? addr : addr?.port;
+    log.info(`Media Video Maker запущен на ${HOST}:${actualPort}`);
+  });
