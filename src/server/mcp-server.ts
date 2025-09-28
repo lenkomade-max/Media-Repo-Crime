@@ -26,14 +26,23 @@ function sendEvent(type: string, payload: unknown) {
   }
 }
 
-// SSE
+// SSE endpoint с корректными заголовками и heartbeat
+const HEARTBEAT_INTERVAL = 15000; // 15 секунд
+const RETRY_TIMEOUT = 10000; // 10 секунд для reconnect
+
 app.get("/mcp/sse", (req, res) => {
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache, no-transform");
   res.setHeader("Connection", "keep-alive");
   res.setHeader("X-Accel-Buffering", "no");
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.write("retry: 10000\n\n");
+  
+  // Установка retry timeout для клиента
+  res.write(`retry: ${RETRY_TIMEOUT}\n\n`);
+  
+  // Отправка initial ping для проверки соединения
+  res.write(`: ${Date.now()}\n\n`);
+  
   res.flushHeaders?.();
 
   const id = Date.now();
@@ -42,10 +51,11 @@ app.get("/mcp/sse", (req, res) => {
   const heartbeat = setInterval(() => {
     if (!res.writableEnded)
       res.write(`: ping ${Date.now()}\n\n`);
-  }, 15000);
+  }, HEARTBEAT_INTERVAL);
 
   clients.push({ id, res, heartbeat });
 
+  // при подключении — сразу список инструментов
   sendEvent("ready", {
     ok: true,
     stage: "v0.3",
@@ -56,9 +66,18 @@ app.get("/mcp/sse", (req, res) => {
     clearInterval(heartbeat);
     const i = clients.findIndex((c) => c.id === id);
     if (i >= 0) clients.splice(i, 1);
+    res.end(); // Корректно закрываем соединение
     console.log("MCP SSE: client", id, "disconnected");
   });
-});
+
+  // Обработка ошибок соединения
+  req.on("error", (err) => {
+    console.error("MCP SSE: client", id, "error:", err);
+    clearInterval(heartbeat);
+    const i = clients.findIndex((c) => c.id === id);
+    if (i >= 0) clients.splice(i, 1);
+    res.end();
+  });
 
 // инструмент media-video
 app.post("/mcp/tools/media-video", express.json({ limit: "20mb" }), async (req, res) => {
