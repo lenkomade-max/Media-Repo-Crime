@@ -167,6 +167,7 @@ app.get("/mcp/status/:id", (req, res) => {
 });
 
 const PORT = process.env.PORT || 5123;
-app.listen(PORT, () => {
-  console.log(`MCP server listening on port ${PORT}`);
+const HOST = "0.0.0.0";
+app.listen(PORT, HOST, () => {
+  console.log(`MCP server listening on ${HOST}:${PORT}`);
 });
