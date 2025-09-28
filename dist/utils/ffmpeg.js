@@ -15,3 +15,7 @@ export async function runFFprobe(file) {
     ]);
     return JSON.parse(stdout);
 }
+/** alias для совместимости с mcp.ts */
+export async function ffprobeJson(file) {
+    return runFFprobe(file);
+}

@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import bodyParser from "body-parser";
-import { createMedia } from "./pipeline/MediaCreator";
+import { createMedia } from "./pipeline/MediaCreator.js";
 
 const app = express();
 app.use(bodyParser.json());
