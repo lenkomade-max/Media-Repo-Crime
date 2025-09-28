@@ -6,8 +6,16 @@ import { log } from "./logger.js";
 const app = express();
 const media = new MediaCreator();
 
-// Увеличиваем лимит для JSON, так как сценарии могут быть большими
+// Базовые настройки
 app.use(express.json({ limit: "50mb" }));
+app.set("trust proxy", true);
+
+// Разрешаем CORS для разработки
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 // Проверка работоспособности
 app.get("/api/ping", (_req, res) => {
@@ -69,16 +77,20 @@ const PORT = Number(process.env.PORT) || 4123;
 const HOST = "0.0.0.0";
 
 // Настраиваем сервер
-const server = app.listen(PORT, HOST, () => {
-  log.info(`Media Video Maker пытается запуститься на ${HOST}:${PORT}`);
-})
-.on("error", (err) => {
-  log.error(`Ошибка запуска сервера: ${err}`);
-  process.exit(1);
-})
-.on("listening", () => {
-  const addr = server.address();
-  log.info(`Media Video Maker успешно слушает ${typeof addr === 'string' ? addr : JSON.stringify(addr)}`);
+const server = app.listen(PORT, HOST)
+  .on("error", (err) => {
+    log.error(`Ошибка запуска сервера: ${err}`);
+    process.exit(1);
+  })
+  .on("listening", () => {
+    const addr = server.address();
+    if (addr && typeof addr === "object") {
+      log.info(`Media Video Maker запущен на http://${addr.address}:${addr.port}`);
+      log.info("Доступные URL:");
+      log.info(`- http://localhost:${addr.port}`);
+      log.info(`- http://127.0.0.1:${addr.port}`);
+      log.info(`- http://${HOST}:${addr.port}`);
+    }
 });
 
 // Graceful shutdown
