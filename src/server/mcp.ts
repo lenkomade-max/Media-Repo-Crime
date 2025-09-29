@@ -79,8 +79,9 @@ export function attachMcpRoutes(app: express.Express, media: MediaCreator) {
   app.get("/mcp/ping", (_req, res) => {
     res.json({
       ok: true,
-      stage: "v0.3",
+      stage: "v0.4",
       tools: ["defaults", "plan", "stt", "tts", "probe", "media-video"],
+      deployed: new Date().toISOString(),
     });
   });
 
@@ -143,5 +144,15 @@ export function attachMcpRoutes(app: express.Express, media: MediaCreator) {
     const job = media.getJobStatus(req.params.id);
     if (!job) return res.status(404).json({ error: "not found" });
     res.json(job);
+  });
+
+  // тестовый endpoint для проверки деплоя
+  app.get("/mcp/test", (req, res) => {
+    res.json({
+      ok: true,
+      message: "MCP тест деплоя работает!",
+      timestamp: Date.now(),
+      version: "v0.4-test",
+    });
   });
 }
