@@ -6,7 +6,11 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
+    "start:media": "node dist/media-server.js",
+    "start:mcp": "node dist/server/mcp-server.js",
     "dev": "ts-node --esm src/index.ts",
+    "dev:media": "ts-node --esm src/media-server.ts",
+    "dev:mcp": "ts-node --esm src/server/mcp-server.ts",
     "check": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {

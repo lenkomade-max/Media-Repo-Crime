@@ -166,8 +166,40 @@ app.get("/mcp/status/:id", (req, res) => {
   res.json(job);
 });
 
-const PORT = Number(process.env.PORT || 5123); // явно приводим к number
-const HOST = '0.0.0.0';
-app.listen(PORT, HOST, () => {
-  console.log(`MCP server listening on ${HOST}:${PORT}`);
+const PORT = Number(process.env.MCP_PORT) || 5123;
+const HOST = process.env.MCP_HOST || "0.0.0.0";
+
+const server = app.listen(PORT, HOST)
+  .on("error", (err) => {
+    console.error(`Ошибка запуска MCP сервера: ${err}`);
+    process.exit(1);
+  })
+  .on("listening", () => {
+    const addr = server.address();
+    if (addr && typeof addr === "object") {
+      console.log(`🔧 MCP Server запущен на http://${addr.address}:${addr.port}`);
+      console.log("Доступные URL:");
+      console.log(`- http://localhost:${addr.port}`);
+      console.log(`- http://127.0.0.1:${addr.port}`);
+      console.log(`- SSE: http://${addr.address}:${addr.port}/mcp/sse`);
+    }
 });
+
+// Graceful shutdown
+process.on("SIGTERM", () => {
+  console.log("Получен сигнал завершения SIGTERM");
+  server.close(() => {
+    console.log("MCP сервер остановлен");
+    process.exit(0);
+  });
+});
+
+process.on("SIGINT", () => {
+  console.log("Получен сигнал завершения SIGINT");
+  server.close(() => {
+    console.log("MCP сервер остановлен");
+    process.exit(0);
+  });
+});
+
+export default app;

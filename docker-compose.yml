@@ -3,20 +3,38 @@ version: '3.8'
 services:
   media-video-maker:
     build: .
-    command: node dist/index.js
+    command: npm run start:media
     ports:
       - "4123:4123"
     volumes:
       - .:/app
+      - ./output:/app/output
     environment:
       - NODE_ENV=production
+      - MEDIA_PORT=4123
+      - MEDIA_HOST=0.0.0.0
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4123/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   mcp-server:
     build: .
-    command: node dist/server/mcp-server.js
+    command: npm run start:mcp
     ports:
       - "5123:5123"
     volumes:
       - .:/app
+      - ./output:/app/output
     environment:
       - NODE_ENV=production
+      - MCP_PORT=5123
+      - MCP_HOST=0.0.0.0
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5123/mcp/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      - media-video-maker
