@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import MediaCreator from "../pipeline/MediaCreator.js";
 import path from "path";
 import fse from "fs-extra";
+import fs from "fs/promises";
 import { resolveVoiceTrack } from "../audio/TTSService.js";
 import { transcribeWithWhisper } from "../transcribe/Whisper.js";
 import { ffprobeJson } from "../utils/ffmpeg.js";
@@ -191,6 +192,7 @@ app.get("/mcp/n8n/info", (req, res) => {
     description: "Server-Sent Events for real-time job monitoring",
     endpoints: {
       sse: "/mcp/sse",
+      webhook: "/mcp/n8n/webhook/:jobId",
       createJob: "POST /mcp/tools/media-video",
       getStatus: "GET /mcp/status/:id",
       ping: "GET /mcp/ping"
@@ -199,6 +201,11 @@ app.get("/mcp/n8n/info", (req, res) => {
       "ready": "Sent when client connects",
       "job": "Sent when job status changes (queued, running, done, error)",
       "ping": "Sent every 15 seconds to keep connection alive"
+    },
+    webhookUsage: {
+      description: "Webhook endpoint for n8n webhook nodes",
+      url: "http://178.156.142.35:5123/mcp/n8n/webhook/WEBHOOK_ID",
+      n8nSetup: "1. Create Webhook node\n2. Set webhook path to WEBHOOK_ID\n3. Select 'POST' method\n4. URL will be auto-generated\n5. Use '/mcp/tools/media-video' to create job with webhook"
     },
     exampleUsage: {
       description: "Connect to SSE for real-time updates",
@@ -212,6 +219,32 @@ eventSource.addEventListener('job', (event) => {
   console.log('Job update:', jobData);
 });`
     }
+  });
+});
+
+// Webhook endpoint для n8n - получает статус задачи
+app.post("/mcp/n8n/webhook/:webhookId", express.json({ limit: "5mb" }), async (req, res) => {
+  const webhookId = req.params.webhookId;
+  const jobData = req.body;
+  
+  console.log(`📡 N8N Webhook received for ID: "${webhookId}"`, jobData);
+  
+  // Логируем запрос от n8n
+  try {
+    await fs.writeFile(`/app/output/webhook_${webhookId}_${Date.now()}.json`, 
+      JSON.stringify({ webhookId, jobData, timestamp: new Date().toISOString() }, null, 2)
+    );
+  } catch (e) {
+    console.log("Could not save webhook data:", e.message);
+  }
+  
+  // Отвечаем обратно в n8n
+  res.json({
+    ok: true,
+    webhookId,
+    received: true,
+    timestamp: new Date().toISOString(),
+    data: jobData
   });
 });
 
