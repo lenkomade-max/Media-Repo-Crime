@@ -74,7 +74,7 @@ app.get("/api/status/:id", (req, res) => {
 });
 
 const PORT = Number(process.env.PORT) || 4123;
-const HOST = "0.0.0.0";
+const HOST = process.env.HOST || "0.0.0.0";
 
 // Настраиваем сервер
 const server = app.listen(PORT, HOST)
