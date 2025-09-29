@@ -100,8 +100,15 @@ media.onStatus = (status) => {
 app.get("/mcp/ping", (_req, res) => {
   res.json({
     ok: true,
-    stage: "v0.3",
+    stage: "v0.4",
+    service: "mcp-server",
     tools: ["defaults", "plan", "stt", "tts", "probe", "media-video"],
+    deployed: new Date().toISOString(),
+    endpoints: {
+      sse: "/mcp/sse",
+      n8nInfo: "/mcp/n8n/info",
+      createJob: "POST /mcp/tools/media-video"
+    }
   });
 });
 
@@ -164,6 +171,48 @@ app.get("/mcp/status/:id", (req, res) => {
   const job = media.getJobStatus(req.params.id);
   if (!job) return res.status(404).json({ error: "not found" });
   res.json(job);
+});
+
+// тестовый endpoint для проверки деплоя
+app.get("/mcp/test", (req, res) => {
+  res.json({
+    ok: true,
+    message: "MCP тест деплоя работает!",
+    timestamp: Date.now(),
+    version: "v0.4-test",
+  });
+});
+
+// endpoint для n8n интеграции
+app.get("/mcp/n8n/info", (req, res) => {
+  res.json({
+    name: "Media Video Maker MCP",
+    version: "0.4",
+    description: "Server-Sent Events for real-time job monitoring",
+    endpoints: {
+      sse: "/mcp/sse",
+      createJob: "POST /mcp/tools/media-video",
+      getStatus: "GET /mcp/status/:id",
+      ping: "GET /mcp/ping"
+    },
+    sseEvents: {
+      "ready": "Sent when client connects",
+      "job": "Sent when job status changes (queued, running, done, error)",
+      "ping": "Sent every 15 seconds to keep connection alive"
+    },
+    exampleUsage: {
+      description: "Connect to SSE for real-time updates",
+      url: "wss://your-server:5123/mcp/sse",
+      javascript: `
+const eventSource = new EventSource('http://localhost:5123/mcp/sse');
+eventSource.onopen = () => console.log('Connected');
+eventSource.onmessage = (event) => console.log('Update:', event.data);
+eventSource.addEventListener('job', (event) => {
+  const jobData = JSON.parse(event.data);
+  console.log('Job update:', jobData);
+});`
+    }
+  });
 });
 
 const PORT = Number(process.env.MCP_PORT) || 5123;
