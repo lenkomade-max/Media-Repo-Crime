@@ -9,6 +9,7 @@ services:
     volumes:
       - .:/app
       - ./output:/app/output
+      - /root/video_factory:/root/video_factory
     environment:
       - NODE_ENV=production
       - MEDIA_PORT=4123
