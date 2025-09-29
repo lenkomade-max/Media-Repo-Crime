@@ -93,20 +93,44 @@ app.post("/mcp/tools/media-video", express.json({ limit: "20mb" }), async (req, 
       console.log(`🔗 Webhook настроен для задачи: ${webhookUrl}`);
     }
     
-    const id = media.enqueueJob(input);
-    sendEvent("job", { id, state: "queued" });
+    console.log(`📤 Отправляем задачу в Media API...`);
+    
+    // Отправляем задачу в Media API сервер (порт 4123)
+    const response = await fetch(`http://localhost:4123/api/create-video`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(input)
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Media API ответил: ${response.status}`);
+    }
+    
+    const result = await response.json();
+    const jobId = result.id;
+    
+    console.log(`✅ Задача создана в Media API: ${jobId}`);
+    
+    // Отправляем SSE событие
+    sendEvent("job", { id: jobId, state: "queued" });
+    
     res.json({ 
       ok: true, 
-      id, 
+      id: jobId, 
       webhookConfigured: !!webhookUrl,
-      statusUrl: `http://178.156.142.35:5123/mcp/status/${id}`,
+      statusUrl: `http://178.156.142.35:5123/mcp/status/${jobId}`,
       n8nWebhook: webhookUrl ? {
         url: webhookUrl,
         events: ["completed", "error"],
         documentation: "Webhook will be called when job finishes"
-      } : null
+      } : null,
+      mediaApiStatus: result.status,
+      link: `Уже создано в Media API: http://localhost:4123/api/status/${jobId}`
     });
   } catch (e: any) {
+    console.log(`❌ Ошибка создания задачи:`, e.message);
     res.status(400).json({ ok: false, error: e?.message || String(e) });
   }
 });
@@ -115,6 +139,32 @@ app.post("/mcp/tools/media-video", express.json({ limit: "20mb" }), async (req, 
 media.onStatus = (status) => {
   sendEvent("job", status);
 };
+
+// получение статуса задачи через Media API
+app.get("/mcp/status/:id", async (req, res) => {
+  try {
+    const jobId = req.params.id;
+    console.log(`📋 Получаем статус задачи: ${jobId}`);
+    
+    // Проверяем статус в Media API
+    const response = await fetch(`http://localhost:4123/api/status/${jobId}`);
+    
+    if (!response.ok) {
+      if (response.status === 404) {
+        return res.json({ error: "not found" });
+      }
+      throw new Error(`Media API ответил: ${response.status}`);
+    }
+    
+    const status = await response.json();
+    console.log(`✅ Статус получен:`, status.state);
+    
+    res.json(status);
+  } catch (e: any) {
+    console.log(`❌ Ошибка получения статуса:`, e.message);
+    res.status(500).json({ error: e?.message || String(e) });
+  }
+});
 
 // ping ручкой
 app.get("/mcp/ping", (_req, res) => {
