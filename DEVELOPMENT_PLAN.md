@@ -47,22 +47,32 @@
 
 ---
 
-### ЭТАП 2: ОСНОВНОЙ VIDEO MAKER API
+### ЭТАП 2: ОСНОВНОЙ VIDEO MAKER API ✅
 **Цель**: Полноценный REST API для создания видео
 **Время**: 3-4 часа
 
 **Задачи**:
-- [ ] POST /api/create-video endpoint
-- [ ] GET /api/status/:id endpoint  
-- [ ] GET /api/ping - health check
-- [ ] Интеграция с существующим MediaCreator
+- [x] POST /api/create-video endpoint с полной валидацией
+- [x] GET /api/status/:id endpoint с ETA и метаданными  
+- [x] GET /api/ping с информацией о сервисе
+- [x] Интеграция с существующим MediaCreator
 
-**Критерии завершения**:
+**Результаты**:
+- ✅ Создан расширенный `/api/create-video` с валидацией и бизнес-логикой
+- ✅ Добавлен `/api/capabilities` для информации о поддерживаемых форматах
+- ✅ Улучшен `/api/status/:id` с расчётом ETA и детальной информацией
+- ✅ Добавлены новые endpoints: `/api/jobs`, `DELETE /api/jobs/:id`
+- ✅ Расширен `/api/ping` с метриками системы (memory, uptime, versions)
+- ✅ Улучшен MediaCreator с поддержкой отмены задач и архивирования
+- ✅ Создана документация API_EXAMPLES.md с примерами использования
+- ✅ Добавлены коды ошибок и детальная обработка исключений
+
+**Критерии завершения**: ✅ ВЫПОЛНЕНО
 ```bash
 curl -X POST http://localhost:4123/api/create-video \
   -H "Content-Type: application/json" \
-  -d '{"files":[{"src":"/path/to/image.jpg","type":"photo","durationSec":3}]}'
-# Returns: {"ok":true,"id":"uuid-hash"}
+  -d '{"files":[{"id":"test","src":"/path/to/image.jpg","type":"photo","durationSec":3}]}'
+# Returns: {"id":"uuid","status":"queued","files":1,"resolution":"1920x1080"...}
 ```
 
 ---

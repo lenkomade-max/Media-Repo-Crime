@@ -17,17 +17,43 @@ export default class MediaCreator {
   private queue: QueueItem[] = [];
   private running = false;
   private statuses = new Map<string, JobStatus>();
+  private completed = new Map<string, JobStatus>();
+  private cancelled = new Set<string>();
 
   /** колбэк для SSE */
   public onStatus?: (status: JobStatus) => void;
 
   enqueueJob(input: PlanInput) { return this.enqueue(input); }
-  getJobStatus(id: string) { return this.statuses.get(id); }
+  getJobStatus(id: string) { return this.statuses.get(id) || this.completed.get(id); }
+  
+  // Новые методы для API
+  getAllJobs(limit = 20, offset = 0) {
+    const all = Array.from(this.statuses.values()).concat(Array.from(this.completed.values()));
+    const sorted = all.sort((a, b) => (b as any).createdAt || 0 - (a as any).createdAt || 0);
+    const total = sorted.length;
+    return {
+      jobs: sorted.slice(offset, offset + limit),
+      pagination: { limit, offset, total, hasMore: offset + limit < total }
+    };
+  }
+
+  cancelJob(id: string) {
+    if (!this.statuses.has(id)) {
+      return false;
+    }
+    this.cancelled.add(id);
+    return true;
+  }
 
   enqueue(input: PlanInput) {
     const parsed = PlanInputSchema.parse(input);
     const id = uuidv4();
-    const status: JobStatus = { id, state: "queued", progress: 0 };
+    const status: JobStatus & { createdAt: number } = { 
+      id, 
+      state: "queued", 
+      progress: 0,
+      createdAt: Date.now()
+    };
     this.statuses.set(id, status);
     this.onStatus?.(status);
     this.queue.push({ id, input: parsed });
@@ -39,21 +65,62 @@ export default class MediaCreator {
     if (this.running) return;
     const item = this.queue.shift();
     if (!item) return;
+    
+    // Проверяем отмену перед началом обработки
+    if (this.cancelled.has(item.id)) {
+      this.cancelled.delete(item.id);
+      this.statuses.delete(item.id);
+      this.running = false;
+      this.pump();
+      return;
+    }
+    
     this.running = true;
     try {
-      let status: JobStatus = { id: item.id, state: "running", progress: 0, message: "init" };
+      let status: JobStatus & { createdAt: number } = { 
+        id: item.id, 
+        state: "running", 
+        progress: 0, 
+        message: "init",
+        createdAt: Date.now()
+      };
       this.statuses.set(item.id, status);
       this.onStatus?.(status);
+
+      // Проверяем отмену во время обработки
+      if (this.cancelled.has(item.id)) {
+        this.cancelled.delete(item.id);
+        status = { id: item.id, state: "error", error: "Job cancelled by user", createdAt: Date.now() };
+        this.statuses.set(item.id, status);
+        this.onStatus?.(status);
+        return;
+      }
 
       const out = await this.process(item.id, item.input);
 
-      status = { id: item.id, state: "done", output: out.output, srt: out.srt, vtt: out.vtt };
+      // Финальная проверка отмены
+      if (this.cancelled.has(item.id)) {
+        this.cancelled.delete(item.id);
+        status = { id: item.id, state: "error", error: "Job cancelled during finalization", createdAt: Date.now() };
+      } else {
+        status = { id: item.id, state: "done", output: out.output, srt: out.srt, vtt: out.vtt, createdAt: Date.now() };
+        // Перемещаем в архив выполненных
+        this.completed.set(item.id, status);
+      }
+      
       this.statuses.set(item.id, status);
       this.onStatus?.(status);
+      this.statuses.delete(item.id); // Удаляем из активных после завершения
     } catch (e: any) {
-      const status: JobStatus = { id: item.id, state: "error", error: e?.message || String(e) };
+      const status: JobStatus & { createdAt: number } = { 
+        id: item.id, 
+        state: "error", 
+        error: e?.message || String(e),
+        createdAt: Date.now()
+      };
       this.statuses.set(item.id, status);
       this.onStatus?.(status);
+      this.statuses.delete(item.id);
     } finally {
       this.running = false;
       this.pump();
