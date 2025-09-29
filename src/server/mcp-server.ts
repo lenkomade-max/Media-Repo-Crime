@@ -84,9 +84,28 @@ app.get("/mcp/sse", (req, res) => {
 // инструмент media-video
 app.post("/mcp/tools/media-video", express.json({ limit: "20mb" }), async (req, res) => {
   try {
-    const id = media.enqueueJob(req.body);
+    const input = req.body;
+    
+    // Проверяем есть ли webhook в запросе
+    const webhookUrl = input.webhook?.url;
+    
+    if (webhookUrl) {
+      console.log(`🔗 Webhook настроен для задачи: ${webhookUrl}`);
+    }
+    
+    const id = media.enqueueJob(input);
     sendEvent("job", { id, state: "queued" });
-    res.json({ ok: true, id });
+    res.json({ 
+      ok: true, 
+      id, 
+      webhookConfigured: !!webhookUrl,
+      statusUrl: `http://178.156.142.35:5123/mcp/status/${id}`,
+      n8nWebhook: webhookUrl ? {
+        url: webhookUrl,
+        events: ["completed", "error"],
+        documentation: "Webhook will be called when job finishes"
+      } : null
+    });
   } catch (e: any) {
     res.status(400).json({ ok: false, error: e?.message || String(e) });
   }
@@ -234,8 +253,8 @@ app.post("/mcp/n8n/webhook/:webhookId", express.json({ limit: "5mb" }), async (r
     await fs.writeFile(`/app/output/webhook_${webhookId}_${Date.now()}.json`, 
       JSON.stringify({ webhookId, jobData, timestamp: new Date().toISOString() }, null, 2)
     );
-  } catch (e) {
-    console.log("Could not save webhook data:", e.message);
+  } catch (e: any) {
+    console.log("Could not save webhook data:", e?.message || e);
   }
   
   // Отвечаем обратно в n8n
