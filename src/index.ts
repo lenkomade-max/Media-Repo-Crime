@@ -21,9 +21,9 @@ app.use((req, res, next) => {
 app.get("/api/ping", (_req, res) => {
   res.json({ 
     status: "ok",
-    version: "1.1",
+    version: "2.0-test",
     timestamp: new Date().toISOString(),
-    message: "Auto-deploy test"
+    message: "DEPLOY SUCCESS!"
   });
 });
 
