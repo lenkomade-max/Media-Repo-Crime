@@ -95,8 +95,9 @@ app.post("/mcp/tools/media-video", express.json({ limit: "20mb" }), async (req, 
     
     console.log(`📤 Отправляем задачу в Media API...`);
     
-    // Отправляем задачу в Media API сервер (порт 4123)
-    const response = await fetch(`http://localhost:4123/api/create-video`, {
+    // Отправляем задачу в Media API сервер (порт 4123) через Docker сеть
+    const mediaApiUrl = process.env.MEDIA_API_URL || `http://media-video-maker:4123/api/create-video`;
+    const response = await fetch(mediaApiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -146,8 +147,9 @@ app.get("/mcp/status/:id", async (req, res) => {
     const jobId = req.params.id;
     console.log(`📋 Получаем статус задачи: ${jobId}`);
     
-    // Проверяем статус в Media API
-    const response = await fetch(`http://localhost:4123/api/status/${jobId}`);
+    // Проверяем статус в Media API через Docker сеть
+    const mediaApiStatusUrl = process.env.MEDIA_API_URL?.replace('/api/create-video', '') || `http://media-video-maker:4123/api/status/${jobId}`;
+    const response = await fetch(mediaApiStatusUrl);
     
     if (!response.ok) {
       if (response.status === 404) {
