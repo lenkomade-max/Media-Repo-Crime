@@ -20,15 +20,27 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: 178.156.142.35
           if_key_exists: replace
-          
-      - name: Adding Known Hosts
-        run: ssh-keyscan -H 178.156.142.35 >> ~/.ssh/known_hosts
+          config: |
+            Host 178.156.142.35
+              StrictHostKeyChecking no
+              UserKnownHostsFile=/dev/null
           
       - name: Deploy to server
         run: |
           ssh root@178.156.142.35 << 'ENDSSH'
+            # Проверяем наличие директории или клонируем репозиторий
+            if [ ! -d "/root/media-video-maker" ]; then
+              cd /root
+              git clone https://github.com/lenkomade-max/media-video-maker.git
+            fi
+            
+            # Переходим в директорию и обновляем код
             cd /root/media-video-maker
-            git pull origin main
+            git config --global --add safe.directory /root/media-video-maker
+            git fetch origin main
+            git reset --hard origin/main
+            
+            # Перезапускаем Docker
             docker-compose down
             docker-compose build
             docker-compose up -d
