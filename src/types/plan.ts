@@ -1,29 +1,27 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-/** Фото/видео-элемент таймлайна */
+/**
+ * Схема для файлов медиа (фото/видео)
+ * Расширена поддержкой URL через флаг download
+ */
 export const MediaFileSchema = z.object({
   id: z.string(),
-  src: z.string(),
+  src: z.string(), // Может быть путь или URL
   type: z.enum(["photo", "video"]).default("photo"),
-  durationSec: z.number().optional(),
-  trimStart: z.number().optional(),
-  trimEnd: z.number().optional(),
-  group: z.string().optional(),
+  download: z.boolean().optional(), // Флаг для скачивания
+  duration: z.number().optional(),
+  startTime: z.number().optional(),
+  endTime: z.number().optional(),
+  aspectRatio: z.string().optional(),
+  effects: z.array(z.any()).optional(),
+  overlays: z.array(z.any()).optional(),
+  subtitle: z.string().optional()
 });
-export type MediaFile = z.infer<typeof MediaFileSchema>;
 
-/** Опции дукинга музыки под голос */
-export const DuckingSchema = z.object({
-  enabled: z.boolean().default(true),
-  musicDuckDb: z.number().default(8),
-  threshold: z.number().default(0.05),
-  ratio: z.number().default(8),
-  attack: z.number().default(5),
-  release: z.number().default(250),
-});
-export type Ducking = z.infer<typeof DuckingSchema>;
-
-/** Провайдер TTS или внешний файл озвучки */
+/**
+ * Схема для опций Text-to-Speech
+ * Расширена поддержкой URL через флаг download
+ */
 export const TTSOptionsSchema = z.object({
   provider: z.enum(["kokoro", "openai", "none"]).default("none"),
   endpoint: z.string().optional(),
@@ -31,178 +29,44 @@ export const TTSOptionsSchema = z.object({
   model: z.string().default("gpt-4o-mini-tts"),
   format: z.enum(["mp3", "wav"]).default("mp3"),
   speed: z.number().default(1.0),
-});
-export type TTSOptions = z.infer<typeof TTSOptionsSchema>;
-
-/** Стили субтитров (ASS/libass force_style) */
-export const SubtitleStyleSchema = z.object({
-  font: z.string().optional(),
-  size: z.number().optional(),
-  color: z.string().optional(),
-  background: z.string().optional(),
-  outline: z.object({
-    enabled: z.boolean().default(true),
-    width: z.number().default(2),
-    color: z.string().default("#000000"),
-  }).optional(),
-  alignment: z.enum(["top", "bottom"]).optional(),
-  marginV: z.number().optional(),
-});
-export type SubtitleStyle = z.infer<typeof SubtitleStyleSchema>;
-
-/** Overlay элементы */
-const PositionSchema = z.object({
-  x: z.number(),
-  y: z.number(),
-  anchor: z
-    .enum([
-      "top-left",
-      "top",
-      "top-right",
-      "left",
-      "center",
-      "right",
-      "bottom-left",
-      "bottom",
-      "bottom-right",
-    ])
-    .optional(),
+  download: z.boolean().optional(), // Для внешних TTS файлов
 });
 
-const TextOverlayStyleSchema = z.object({
-  font: z.string().optional(),
-  size: z.number().optional(),
-  color: z.string().optional(),
-  background: z.string().optional(),
-  outlineWidth: z.number().optional(),
-});
-
-const RectShapeSchema = z.object({
-  w: z.number().optional(),
-  h: z.number().optional(),
-  color: z.string().optional(),
-  thickness: z.number().optional(),
-  fillOpacity: z.number().min(0).max(1).optional(),
-});
-
-const CircleShapeSchema = z.object({
-  radius: z.number().optional(),
-  color: z.string().optional(),
-  thickness: z.number().optional(),
-  fillOpacity: z.number().min(0).max(1).optional(),
-});
-
-const ArrowShapeSchema = z.object({
-  x1: z.number(),
-  y1: z.number(),
-  x2: z.number(),
-  y2: z.number(),
-  color: z.string().optional(),
-  thickness: z.number().optional(),
-  headSize: z.number().optional(),
-});
-
-export const OverlayItemSchema = z.object({
-  target: z.enum(["top", "bottom", "custom", "rect", "circle", "arrow"]),
-  text: z.string().optional(),
-  startSec: z.number().default(0),
-  endSec: z.number().default(0),
-  position: PositionSchema.optional(),
-  style: TextOverlayStyleSchema.optional(),
-  shape: z.union([RectShapeSchema, CircleShapeSchema, ArrowShapeSchema]).optional(),
-});
-export type OverlayItem = z.infer<typeof OverlayItemSchema>;
-
-/** Эффекты Этап 3 */
-const ZoomEffectSchema = z.object({
-  kind: z.literal("zoom"),
-  startSec: z.number().default(0),
-  endSec: z.number().default(0),
-  params: z.object({
-    startScale: z.number().default(1.0),
-    endScale: z.number().default(1.2),
-    cx: z.number().default(0.5), // 0..1 (нормированные координаты центра)
-    cy: z.number().default(0.5),
-  }),
-});
-const VhsEffectSchema = z.object({
-  kind: z.literal("vhs"),
-  startSec: z.number().default(0),
-  endSec: z.number().default(0),
-  params: z.object({
-    noise: z.number().default(20), // 5..40
-    chroma: z.number().default(2), // 0..5
-    contrast: z.number().default(1.05),
-    saturation: z.number().default(1.15),
-  }).optional(),
-});
-const RetroEffectSchema = z.object({
-  kind: z.literal("retro"),
-  startSec: z.number().default(0),
-  endSec: z.number().default(0),
-  params: z.object({
-    vignette: z.number().default(Math.PI / 5),
-    grain: z.number().default(5),
-    saturation: z.number().default(0.95),
-    contrast: z.number().default(1.05),
-    gamma: z.number().default(0.98),
-  }).optional(),
-});
-const CustomEffectSchema = z.object({
-  kind: z.literal("custom"),
-  startSec: z.number().default(0),
-  endSec: z.number().default(0),
-  filter: z.string(), // произвольная ffmpeg-цепочка с enable='between(t,...)'
-});
-
-export const EffectItemSchema = z.discriminatedUnion("kind", [
-  ZoomEffectSchema,
-  VhsEffectSchema,
-  RetroEffectSchema,
-  CustomEffectSchema,
-]);
-export type EffectItem = z.infer<typeof EffectItemSchema>;
-
+/**
+ * Схема для ввода плана создания видео
+ * Расширена поддержкой URL для музыки
+ */
 export const PlanInputSchema = z.object({
   files: z.array(MediaFileSchema).nonempty(),
-  music: z.string().optional(),
-
-  width: z.number().default(1080),
-  height: z.number().default(1920),
-  fps: z.number().default(30),
-  durationPerPhoto: z.number().default(2.0),
-  outputFormat: z.enum(["mp4", "mov"]).default("mp4"),
-
+  output: z.string(),
+  duration: z.number().optional(),
+  resolution: z.string().optional().default("1080x1920"),
+  fps: z.number().optional().default(30),
+  music: z.string().optional(), // Может быть URL
+  musicDownload: z.boolean().optional(), // Флаг для скачивания музыки
   voiceFile: z.string().optional(),
   tts: TTSOptionsSchema.optional(),
-  ttsText: z.string().optional(),
-
-  transcribeAudio: z.boolean().default(false),
-  burnSubtitles: z.boolean().default(false),
-
-  musicVolumeDb: z.number().default(-6),
-  ducking: DuckingSchema.default({
-    enabled: true,
-    musicDuckDb: 8,
-    threshold: 0.05,
-    ratio: 8,
-    attack: 5,
-    release: 250,
-  }),
-
-  overlays: z.array(OverlayItemSchema).optional(),
-  subtitleStyle: SubtitleStyleSchema.optional(),
-
-  groups: z.array(z.object({ group: z.string(), durationSec: z.number() })).optional(),
-  effects: z.array(EffectItemSchema).optional(),
+  subtitles: z.boolean().optional().default(false),
+  effects: z.array(z.any()).optional(),
+  overlays: z.array(z.any()).optional(),
+  transitions: z.array(z.any()).optional(),
+  webhook: z.string().optional() // URL для отправки уведомления о готовности
 });
+
+/**
+ * Схема для результата обработки плана
+ */
+export const PlanResultSchema = z.object({
+  jobId: z.string(),
+  status: z.enum(["completed", "failed", "processing"]),
+  videoUrl: z.string().optional(),
+  downloadUrl: z.string().optional(),
+  cleanupCompleted: z.boolean().optional(),
+  timestamp: z.string(),
+  error: z.string().optional()
+});
+
+export type MediaFile = z.infer<typeof MediaFileSchema>;
+export type TTSOptions = z.infer<typeof TTSOptionsSchema>;
 export type PlanInput = z.infer<typeof PlanInputSchema>;
-
-export type JobStatus =
-  | { id: string; state: "queued"; progress: number }
-  | { id: string; state: "running"; progress: number; message?: string }
-  | { id: string; state: "done"; output: string; srt?: string; vtt?: string }
-  | { id: string; state: "error"; error: string };
-
-/** Совместимость со старым импортом `Overlay` */
-export type Overlay = OverlayItem;
+export type PlanResult = z.infer<typeof PlanResultSchema>;

@@ -1,0 +1,46 @@
+{
+  "width": 854,
+  "height": 480,
+  "fps": 30,
+  "durationSec": 5,
+  "outputFormat": "mp4",
+  "files": [
+    {
+      "id": "main_video",
+      "type": "video",
+      "src": "assets/main.mp4",
+      "trimStart": 0,
+      "trimEnd": 5
+    }
+  ],
+  "timeline": {
+    "base": [
+      {
+        "type": "video",
+        "file": "assets/main.mp4"
+      }
+    ],
+    "overlays": []
+  },
+  "overlays": [
+    {
+      "target": "top",
+      "text": "ТЕСТОВОЕ ВИДЕО 480P",
+      "startSec": 0,
+      "endSec": 5,
+      "style": {
+        "size": 32,
+        "color": "#FFFFFF",
+        "fontWeight": "bold",
+        "textTransform": "uppercase",
+        "backgroundStyle": {
+          "color": "rgba(0,0,0,0.7)",
+          "borderRadius": 6,
+          "padding": 12
+        }
+      }
+    }
+  ],
+  "burnSubtitles": true,
+  "transcribeAudio": false
+}

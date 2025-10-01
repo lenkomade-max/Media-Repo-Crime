@@ -1,0 +1,82 @@
+{
+  "width": 640,
+  "height": 360,
+  "fps": 30,
+  "durationSec": 10,
+  "outputFormat": "mp4",
+  "files": [
+    {
+      "id": "main_video",
+      "type": "video",
+      "src": "/root/media-video-maker_project/assets/Test video Main.mp4",
+      "trimStart": 0,
+      "trimEnd": 10
+    }
+  ],
+  "timeline": {
+    "base": [
+      {
+        "type": "video",
+        "file": "/root/media-video-maker_project/assets/Test video Main.mp4"
+      }
+    ],
+    "overlays": [
+      {
+        "type": "effect",
+        "file": "/root/media-video-maker_project/assets/overlay_arrow.mov",
+        "blendMode": "screen",
+        "start": 2,
+        "end": 5
+      },
+      {
+        "type": "effect",
+        "file": "/root/media-video-maker_project/assets/VHS 01 Effect.mp4",
+        "blendMode": "overlay",
+        "start": 0,
+        "end": 10
+      },
+      {
+        "type": "effect",
+        "file": "/root/media-video-maker_project/assets/VHS 02 Effect.mp4",
+        "blendMode": "softlight",
+        "start": 0,
+        "end": 10
+      }
+    ]
+  },
+  "overlays": [
+    {
+      "target": "top",
+      "text": "КРИМИНАЛЬНЫЕ НОВОСТИ",
+      "startSec": 0,
+      "endSec": 10,
+      "style": {
+        "size": 36,
+        "color": "#FF0000",
+        "fontWeight": "bold",
+        "textTransform": "uppercase",
+        "backgroundStyle": {
+          "color": "rgba(0,0,0,0.8)",
+          "borderRadius": 8,
+          "padding": 15
+        }
+      }
+    },
+    {
+      "target": "bottom",
+      "text": "Следите за обновлениями",
+      "startSec": 3,
+      "endSec": 8,
+      "style": {
+        "size": 28,
+        "color": "#FFFFFF",
+        "fontWeight": "normal",
+        "backgroundStyle": {
+          "color": "rgba(0,0,0,0.6)",
+          "borderRadius": 6,
+          "padding": 10
+        }
+      }
+    }
+  ]
+}

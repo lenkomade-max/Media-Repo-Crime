@@ -1,0 +1,64 @@
+{
+  "files": [
+    {"id": "img1", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (1).jpeg", "type": "photo"},
+    {"id": "img2", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (2).jpeg", "type": "photo"},
+    {"id": "img3", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (3).jpeg", "type": "photo"},
+    {"id": "img4", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (4).jpeg", "type": "photo"},
+    {"id": "img5", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (5).jpeg", "type": "photo"},
+    {"id": "img6", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (6).jpeg", "type": "photo"},
+    {"id": "img7", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (7).jpeg", "type": "photo"},
+    {"id": "img8", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (8).jpeg", "type": "photo"},
+    {"id": "img9", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (9).jpeg", "type": "photo"},
+    {"id": "img10", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (10).jpeg", "type": "photo"},
+    {"id": "img11", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (11).jpeg", "type": "photo"},
+    {"id": "img12", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (12).jpeg", "type": "photo"},
+    {"id": "img13", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (13).jpeg", "type": "photo"},
+    {"id": "img14", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (14).jpeg", "type": "photo"},
+    {"id": "img15", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (15).jpeg", "type": "photo"},
+    {"id": "img16", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (16).jpeg", "type": "photo"},
+    {"id": "img17", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (17).jpeg", "type": "photo"},
+    {"id": "img18", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (18).jpeg", "type": "photo"},
+    {"id": "img19", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (19).jpeg", "type": "photo"},
+    {"id": "img20", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (20).jpeg", "type": "photo"},
+    {"id": "img21", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (21).jpeg", "type": "photo"},
+    {"id": "img22", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (22).jpeg", "type": "photo"},
+    {"id": "img23", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (23).jpeg", "type": "photo"},
+    {"id": "img24", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (24).jpeg", "type": "photo"},
+    {"id": "img25", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (25).jpeg", "type": "photo"},
+    {"id": "img26", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (26).jpeg", "type": "photo"},
+    {"id": "img27", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044 (27).jpeg", "type": "photo"},
+    {"id": "img28", "src": "assets/CRIME_MATERIAL/image_5656pit_202508160044.jpeg", "type": "photo"},
+    {"id": "img29", "src": "assets/CRIME_MATERIAL/image_565pit_202508160044 (10).jpeg", "type": "photo"},
+    {"id": "img30", "src": "assets/CRIME_MATERIAL/image_565pit_202508160044 (11).jpeg", "type": "photo"}
+  ],
+  "output": "chessboard_killer_60s.mp4",
+  "duration": 60,
+  "resolution": "1080x1920",
+  "effects": [
+    {"kind": "zoom", "params": {"intensity": 0.2}},
+    {"kind": "vhs", "params": {"intensity": 0.3}}
+  ],
+  "overlays": [
+    {"file": "assets/VHS 01 Effect.mp4", "blend": "overlay", "opacity": 0.4, "target": "top"},
+    {"file": "assets/VHS 02 Effect.mp4", "blend": "multiply", "opacity": 0.2, "target": "bottom"},
+    {"file": "assets/overlay_arrow.mov", "blend": "screen", "opacity": 0.6, "target": "custom"}
+  ],
+  "backgroundMusic": {
+    "file": "assets/background_music.mp3",
+    "volume": 0.3
+  },
+  "tts": {
+    "text": "I'm going to walk with Alex Petrov today, Marina Williams wrote to her son before leaving their Bronx apartment. The NYC Chessboard Killer had terrorized the city for three years, murdering 48 people in Central Park and marking each kill on his homemade chessboard. Alexander Petrov seemed like just another lonely guy looking for friendship, but Marina's simple note would expose him as America's most prolific urban serial killer. When her body was found in Bittsdale Park with a hammer blow to the head, Detective Karen Thompson immediately searched Marina's apartment. The handwritten note with Petrov's name and phone number sat on her kitchen table like a confession. But the real breakthrough came from NYC subway surveillance cameras. Security footage showed Marina and Petrov walking together through Times Square station just hours before her murder. His face was crystal clear on multiple cameras as they descended toward the park. Alexander Petrov, 32, unemployed computer programmer with a disturbing obsession with chess strategy. When police raided his Washington Heights apartment, they discovered his horrifying scoreboard - a massive chessboard with 61 squares filled in red marker. Each square represented a human life he'd taken. He planned to reach 64 kills to complete his perfect game. Marina's thoughtful note to her son became the evidence that stopped him three murders short of his twisted goal. Do you ever tell someone exactly where you're going when you leave home?",
+    "voice": "alloy",
+    "provider": "kokoro"
+  },
+  "subtitles": {
+    "enabled": true,
+    "style": {
+      "fontSize": 24,
+      "color": "white",
+      "outline": "black",
+      "position": "bottom"
+    }
+  }
+}

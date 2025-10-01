@@ -1,18 +1,32 @@
+# Исключаем CRIME_MATERIAL полностью
+**/CRIME_MATERIAL/
+**/CRIME MATERIAL/
+**/crime_material/
+**/crime materials/
 
-```gitignore
-# Node
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-lock.yaml
-
-# Build
+# Временные файлы и логи
+*.log
+*.tmp
+temp_*
+job_*/
+out/
 dist/
-*.map
+node_modules/
 
-# OS/editor
+# Медиа файлы
+*.mp4
+*.mov
+*.wav
+*.mp3
+*.srt
+*.ass
+*.vtt
+
+# Системные файлы
 .DS_Store
-.idea/
-.vscode/
 .env
+*.key
+*.pem
+
+# Загрузки
+assets/downloads/
