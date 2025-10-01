@@ -29,4 +29,4 @@ node_modules/
 *.pem
 
 # Загрузки
-assets/downloads/
+assets/downloads/media-video-maker_server/kokoro-v1.0.onnx
