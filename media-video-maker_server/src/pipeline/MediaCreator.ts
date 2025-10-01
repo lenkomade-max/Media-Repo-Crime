@@ -135,7 +135,7 @@ export default class MediaCreator {
   }
 
   private async process(id: string, input: PlanInput): Promise<{ output: string; srt?: string; vtt?: string }> {
-    const workRoot = "/app/output";
+    const workRoot = path.join(process.cwd(), "output");
     const workDir = path.join(workRoot, `job_${id}`);
     await fse.ensureDir(workDir);
 

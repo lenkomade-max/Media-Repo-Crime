@@ -1,0 +1,77 @@
+{
+  "files": [
+    {"id": "photo1", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo1.jpg", "type": "photo"},
+    {"id": "photo2", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo2.jpg", "type": "photo"},
+    {"id": "photo3", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo3.jpg", "type": "photo"},
+    {"id": "photo4", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo4.jpg", "type": "photo"},
+    {"id": "photo5", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo5.jpg", "type": "photo"},
+    {"id": "photo6", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo6.jpg", "type": "photo"},
+    {"id": "photo7", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo7.jpg", "type": "photo"},
+    {"id": "photo8", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo8.jpg", "type": "photo"},
+    {"id": "photo9", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo9.jpg", "type": "photo"},
+    {"id": "photo10", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo10.jpg", "type": "photo"},
+    {"id": "photo11", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo11.jpg", "type": "photo"},
+    {"id": "photo12", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo12.jpg", "type": "photo"},
+    {"id": "photo13", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo13.jpg", "type": "photo"},
+    {"id": "photo14", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo14.jpg", "type": "photo"},
+    {"id": "photo15", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo15.jpg", "type": "photo"},
+    {"id": "photo16", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo16.jpg", "type": "photo"},
+    {"id": "photo17", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo17.jpg", "type": "photo"},
+    {"id": "photo18", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo18.jpg", "type": "photo"},
+    {"id": "photo19", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo19.jpg", "type": "photo"},
+    {"id": "photo20", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo20.jpg", "type": "photo"},
+    {"id": "photo21", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo21.jpg", "type": "photo"},
+    {"id": "photo22", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo22.jpg", "type": "photo"},
+    {"id": "photo23", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo23.jpg", "type": "photo"},
+    {"id": "photo24", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo24.jpg", "type": "photo"},
+    {"id": "photo25", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo25.jpg", "type": "photo"},
+    {"id": "photo26", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo26.jpg", "type": "photo"},
+    {"id": "photo27", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo27.jpg", "type": "photo"},
+    {"id": "photo28", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo28.jpg", "type": "photo"},
+    {"id": "photo29", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo29.jpg", "type": "photo"},
+    {"id": "photo30", "src": "/root/media-video-maker_project/assets/CRIME_MATERIAL/photo30.jpg", "type": "photo"}
+  ],
+  "ttsText": "We found more bodies, Detective Amanda Rodriguez whispered into her radio as she stared into the abandoned quarry outside Detroit. What started as a missing persons case had become the city's worst serial killing spree in decades. Colin Jackson, 32, had been luring women from downtown Detroit bars and strangling them before dumping their bodies in the industrial wasteland. When police surrounded his rundown apartment in August 2024, Jackson shocked everyone by immediately confessing. I killed 42 women, he told detectives without emotion. I can show you where they all are. His cooperation led investigators to nine bodies within days, all women between 18 and 30 years old. Jackson's detailed confessions included dates, locations, and methods - creating an airtight case against Detroit's most prolific killer. But his story took a stunning turn just one month later. On September 15th, Jackson and 12 other inmates escaped from Wayne County Jail with help from five corrupt officers. Security footage showed the group cutting through mesh roof panels before scaling an outer wall. The officers had been paid $50,000 each to look the other way during the midnight breakout. Jackson vanished into the night and remains at large somewhere in America. FBI believes he may have fled to Canada or Mexico, but sightings have been reported across the Midwest. His escape has terrified Detroit residents who thought their nightmare was finally over. The hunt for America's most wanted serial killer continues. Do you ever worry about who might be hiding in your neighborhood right now?",
+  "tts": {
+    "provider": "kokoro",
+    "voice": "en_male_2"
+  },
+  "music": "/root/media-video-maker_project/assets/CRIME_MATERIAL/music.mp3",
+  "musicVolumeDb": -20,
+  "overlays": [
+    {
+      "target": "top",
+      "text": "Serial Killer Confessed to 42 Murders Then Escaped Jail 🚨💀 #DetroitEscape",
+      "position": {"x": 0, "y": 50},
+      "startSec": 0,
+      "endSec": 60,
+      "style": {
+        "size": 48,
+        "color": "#FF0000",
+        "font": "Arial Black",
+        "outlineWidth": 3,
+        "background": "#FFFFFF"
+      }
+    },
+    {
+      "target": "bottom",
+      "text": "Detroit's Worst Serial Killer Broke Out of Jail 🔓💀",
+      "position": {"x": 0, "y": 80},
+      "startSec": 0,
+      "endSec": 60,
+      "style": {
+        "size": 36,
+        "color": "#FFFF00",
+        "font": "Impact",
+        "outlineWidth": 2,
+        "background": "#000000"
+      }
+    }
+  ],
+  "durationSec": 60,
+  "transcribeAudio": true,
+  "whisperOptions": {
+    "model": "base",
+    "outputFormat": "srt"
+  }
+}
