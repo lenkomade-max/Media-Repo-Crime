@@ -1,0 +1,77 @@
+{
+  "files": [
+    {"id": "photo1", "src": "/root/CRIME MATERIAL/photo_01.jpeg", "type": "photo"},
+    {"id": "photo2", "src": "/root/CRIME MATERIAL/photo_02.jpeg", "type": "photo"},
+    {"id": "photo3", "src": "/root/CRIME MATERIAL/photo_03.jpeg", "type": "photo"},
+    {"id": "photo4", "src": "/root/CRIME MATERIAL/photo_04.jpeg", "type": "photo"},
+    {"id": "photo5", "src": "/root/CRIME MATERIAL/photo_05.jpeg", "type": "photo"},
+    {"id": "photo6", "src": "/root/CRIME MATERIAL/photo_06.jpeg", "type": "photo"},
+    {"id": "photo7", "src": "/root/CRIME MATERIAL/photo_07.jpeg", "type": "photo"},
+    {"id": "photo8", "src": "/root/CRIME MATERIAL/photo_08.jpeg", "type": "photo"},
+    {"id": "photo9", "src": "/root/CRIME MATERIAL/photo_09.jpeg", "type": "photo"},
+    {"id": "photo10", "src": "/root/CRIME MATERIAL/photo_10.jpeg", "type": "photo"},
+    {"id": "photo11", "src": "/root/CRIME MATERIAL/photo_11.jpeg", "type": "photo"},
+    {"id": "photo12", "src": "/root/CRIME MATERIAL/photo_12.jpeg", "type": "photo"},
+    {"id": "photo13", "src": "/root/CRIME MATERIAL/photo_13.jpeg", "type": "photo"},
+    {"id": "photo14", "src": "/root/CRIME MATERIAL/photo_14.jpeg", "type": "photo"},
+    {"id": "photo15", "src": "/root/CRIME MATERIAL/photo_15.jpeg", "type": "photo"},
+    {"id": "photo16", "src": "/root/CRIME MATERIAL/photo_16.jpeg", "type": "photo"},
+    {"id": "photo17", "src": "/root/CRIME MATERIAL/photo_17.jpeg", "type": "photo"},
+    {"id": "photo18", "src": "/root/CRIME MATERIAL/photo_18.jpeg", "type": "photo"},
+    {"id": "photo19", "src": "/root/CRIME MATERIAL/photo_19.jpeg", "type": "photo"},
+    {"id": "photo20", "src": "/root/CRIME MATERIAL/photo_20.jpeg", "type": "photo"},
+    {"id": "photo21", "src": "/root/CRIME MATERIAL/photo_21.jpeg", "type": "photo"},
+    {"id": "photo22", "src": "/root/CRIME MATERIAL/photo_22.jpeg", "type": "photo"},
+    {"id": "photo23", "src": "/root/CRIME MATERIAL/photo_23.jpeg", "type": "photo"},
+    {"id": "photo24", "src": "/root/CRIME MATERIAL/photo_24.jpeg", "type": "photo"},
+    {"id": "photo25", "src": "/root/CRIME MATERIAL/photo_25.jpeg", "type": "photo"},
+    {"id": "photo26", "src": "/root/CRIME MATERIAL/photo_26.jpeg", "type": "photo"},
+    {"id": "photo27", "src": "/root/CRIME MATERIAL/photo_27.jpeg", "type": "photo"},
+    {"id": "photo28", "src": "/root/CRIME MATERIAL/photo_28.jpeg", "type": "photo"},
+    {"id": "photo29", "src": "/root/CRIME MATERIAL/photo_29.jpeg", "type": "photo"},
+    {"id": "photo30", "src": "/root/CRIME MATERIAL/photo_30.jpeg", "type": "photo"}
+  ],
+  "ttsText": "We found more bodies, Detective Amanda Rodriguez whispered into her radio as she stared into the abandoned quarry outside Detroit. What started as a missing persons case had become the city's worst serial killing spree in decades. Colin Jackson, 32, had been luring women from downtown Detroit bars and strangling them before dumping their bodies in the industrial wasteland. When police surrounded his rundown apartment in August 2024, Jackson shocked everyone by immediately confessing. I killed 42 women, he told detectives without emotion. I can show you where they all are. His cooperation led investigators to nine bodies within days, all women between 18 and 30 years old. Jackson's detailed confessions included dates, locations, and methods - creating an airtight case against Detroit's most prolific killer. But his story took a stunning turn just one month later. On September 15th, Jackson and 12 other inmates escaped from Wayne County Jail with help from five corrupt officers. Security footage showed the group cutting through mesh roof panels before scaling an outer wall. The officers had been paid $50,000 each to look the other way during the midnight breakout. Jackson vanished into the night and remains at large somewhere in America. FBI believes he may have fled to Canada or Mexico, but sightings have been reported across the Midwest. His escape has terrified Detroit residents who thought their nightmare was finally over. The hunt for America's most wanted serial killer continues. Do you ever worry about who might be hiding in your neighborhood right now?",
+  "tts": {
+    "provider": "kokoro",
+    "voice": "en_male_2"
+  },
+  "music": "/root/CRIME MATERIAL/5bd0ce7d8fca398.mp3",
+  "musicVolumeDb": -20,
+  "overlays": [
+    {
+      "target": "top",
+      "text": "Serial Killer Confessed to 42 Murders Then Escaped Jail 🚨💀 #DetroitEscape",
+      "position": {"x": 0, "y": 50, "anchor": "top"},
+      "startSec": 0,
+      "endSec": 60,
+      "style": {
+        "size": 48,
+        "color": "#FF0000",
+        "font": "Arial Black",
+        "outlineWidth": 3,
+        "background": "#FFFFFF"
+      }
+    },
+    {
+      "target": "bottom",
+      "text": "Detroit's Worst Serial Killer Broke Out of Jail 🔓💀",
+      "position": {"x": 0, "y": 80, "anchor": "bottom"},
+      "startSec": 0,
+      "endSec": 60,
+      "style": {
+        "size": 36,
+        "color": "#FFFF00",
+        "font": "Impact",
+        "outlineWidth": 2,
+        "background": "#000000"
+      }
+    }
+  ],
+  "durationSec": 60,
+  "transcribeAudio": true,
+  "whisperOptions": {
+    "model": "base",
+    "outputFormat": "srt"
+  }
+}
