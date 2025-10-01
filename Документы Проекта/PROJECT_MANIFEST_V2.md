@@ -60,12 +60,12 @@ Media Video Maker — сервер для автоматизированной �
 - Эффекты: `effects[]` (например, zoom)
 
 ## REST и MCP
-- REST (порт 3000):
+- REST (порт 4123):
   - `POST /api/create-video` — принять план, вернуть `jobId`
   - `GET /api/status/:id` — статус, пути к файлам
   - `GET /api/jobs` — список задач
   - `GET /api/capabilities` — поддерживаемые возможности
-- MCP (порт 3001):
+- MCP (порт 5123):
   - `POST /mcp/tools/media-video` — сборка по плану
   - `POST /mcp/subtitles/generate` — Whisper (STT)
   - `POST /mcp/tts/synthesize` — TTS (Kokoro/OpenAI)

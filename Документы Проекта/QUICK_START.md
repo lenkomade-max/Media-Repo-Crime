@@ -16,8 +16,8 @@ npm run dev  # или npm start
 ```
 
 ### 3. **Порты:**
-- REST API: http://localhost:3000
-- MCP Server: http://localhost:3001
+- REST API: http://localhost:4123
+- MCP Server: http://localhost:5123
 
 ### 4. **Основные эндпоинты:**
 - `POST /api/create-video` - создание видео
@@ -88,7 +88,7 @@ npm run dev  # или npm start
 ### 10. **Проблемы:**
 - Нет `kokoro-v1.0.onnx` → скачать модель
 - FFmpeg ошибка → проверить установку
-- Порт занят → изменить в `src/index.ts`
+- Порт занят → изменить в `src/index.ts` (REST: 4123, MCP: 5123)
 - Ошибки скачивания → проверить URL, MIME-типы, размеры файлов
 - Проблемы автоочистки → проверить права доступа к `assets/downloads/`
 

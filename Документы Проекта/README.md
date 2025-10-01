@@ -29,14 +29,14 @@ npm start
 
 ## 📡 API Endpoints
 
-### REST API (порт 3000)
+### REST API (порт 4123)
 - `GET /api/ping` - проверка статуса
 - `POST /api/create-video` - создание видео
 - `GET /api/status/:id` - статус задачи
 - `GET /api/jobs` - список задач
 - `GET /api/capabilities` - возможности сервера
 
-### MCP Server (порт 3001)
+### MCP Server (порт 5123)
 - `POST /mcp/tools/media-video` - создание видео через MCP
 - `POST /mcp/subtitles/generate` - генерация субтитров
 - `POST /mcp/tts/synthesize` - синтез речи
@@ -187,7 +187,7 @@ media-video-maker_server/
 Убедитесь что FFmpeg установлен: `ffmpeg -version`
 
 ### Порт занят
-Измените порты в `src/index.ts` (REST: 3000, MCP: 3001)
+Измените порты в `src/index.ts` (REST: 4123, MCP: 5123)
 
 ### Ошибки скачивания файлов
 - Проверьте доступность URL: `curl -I "https://example.com/file.jpg"`
@@ -212,14 +212,14 @@ media-video-maker_server/
 
 ### Создание простого видео (локальные файлы):
 ```bash
-curl -X POST http://localhost:3000/api/create-video \
+curl -X POST http://localhost:4123/api/create-video \
   -H "Content-Type: application/json" \
   -d @example_plan.json
 ```
 
 ### Создание видео с внешними URL:
 ```bash
-curl -X POST http://localhost:3000/api/create-video \
+curl -X POST http://localhost:4123/api/create-video \
   -H "Content-Type: application/json" \
   -d '{
     "files": [
@@ -235,7 +235,7 @@ curl -X POST http://localhost:3000/api/create-video \
 
 ### Через MCP:
 ```bash
-curl -X POST http://localhost:3001/mcp/tools/media-video \
+curl -X POST http://localhost:5123/mcp/tools/media-video \
   -H "Content-Type: application/json" \
   -d @mcp_plan.json
 ```
