@@ -117,7 +117,8 @@ export class VideoOverlayRenderer {
     const ffmpegBlendMode = blendModeMap[blendMode] || "overlay";
     
     // Создаем уникальную метку для масштабированного overlay
-    const scaledLabel = `[scaled_${Math.random().toString(36).substr(2, 9)}]`;
+      let step = 0;
+      const scaledLabel = `[scaled_${++step}]`;
     
     // Масштабируем overlay к размеру base видео (640x360)
     const scaleFilter = `${overlayLabel}scale=640:360${scaledLabel}`;

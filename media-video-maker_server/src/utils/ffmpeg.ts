@@ -3,8 +3,13 @@ import { log } from "../logger.js";
 
 export async function runFFmpeg(args: string[], cwd?: string) {
   log.debug("ffmpeg", args.join(" "));
-  const p = execa("ffmpeg", ["-y", ...args], { cwd });
-  await p;
+  try {
+    const { stdout, stderr } = await execa("ffmpeg", ["-y", ...args], { cwd });
+    return { stdout, stderr };
+  } catch (error) {
+    log.error("FFmpeg error:", error);
+    throw error;
+  }
 }
 
 export async function runFFprobe(file: string) {

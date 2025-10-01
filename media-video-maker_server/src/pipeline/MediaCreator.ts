@@ -7,6 +7,7 @@ import { PlanInput, PlanInputSchema, JobStatus } from "../types/plan.js";
 import { buildSlidesVideo } from "./ConcatPlanBuilder.js";
 import { resolveVoiceTrack } from "../audio/TTSService.js";
 import { transcribeWithWhisper } from "../transcribe/Whisper.js";
+import { validateFileExists } from "../utils/fs.js";
 import { buildAudioFilter } from "../audio/AudioMixer.js";
 import { buildVideoOverlayFilter } from "./OverlayRenderer.js";
 import { log } from "../logger.js";
@@ -18,7 +19,8 @@ type QueueItem = { id: string; input: PlanInput };
 
 export default class MediaCreator {
   private queue: QueueItem[] = [];
-  private running = false;
+  private running = 0; // Количество одновременно выполняющихся задач
+  private maxConcurrent = 3; // Максимум 3 задачи одновременно
   private statuses = new Map<string, JobStatus>();
   private completed = new Map<string, JobStatus>();
   private cancelled = new Set<string>();
@@ -67,7 +69,7 @@ export default class MediaCreator {
   }
 
   private async pump() {
-    if (this.running) return;
+    if (this.running >= this.maxConcurrent) return;
     const item = this.queue.shift();
     if (!item) return;
     
@@ -75,12 +77,11 @@ export default class MediaCreator {
     if (this.cancelled.has(item.id)) {
       this.cancelled.delete(item.id);
       this.statuses.delete(item.id);
-      this.running = false;
       this.pump();
       return;
     }
     
-    this.running = true;
+    this.running++;
     try {
       let status: JobStatus & { createdAt: number } = { 
         id: item.id, 
@@ -129,8 +130,8 @@ export default class MediaCreator {
       this.onStatus?.(status);
       this.statuses.delete(item.id);
     } finally {
-      this.running = false;
-      this.pump();
+      this.running--;
+      this.pump(); // Обрабатываем следующую задачу
     }
   }
 
@@ -171,7 +172,13 @@ export default class MediaCreator {
 
     const hasMusic = !!processedInput.music;
     const hasVoice = !!voicePath;
-    if (hasMusic) args.push("-i", path.resolve(processedInput.music!));
+    if (hasMusic) {
+      const musicPath = path.resolve(processedInput.music!);
+      if (!await validateFileExists(musicPath)) {
+        throw new Error(`Music file not found: ${processedInput.music}`);
+      }
+      args.push("-i", musicPath);
+    }
     if (hasVoice) args.push("-i", voicePath!);
 
     // Строим видео фильтры (эффекты, оверлеи, субтитры)

@@ -9,11 +9,12 @@ import { PlanInput, TTSOptions } from "../types/plan.js";
  * - иначе возвращает null
  */
 export async function resolveVoiceTrack(input: PlanInput, workDir: string): Promise<string | null> {
-  if (input.voiceFile) return path.resolve(input.voiceFile);
+  try {
+    if (input.voiceFile) return path.resolve(input.voiceFile);
 
-  if (!input.tts || input.tts.provider === "none" || !input.ttsText) {
-    return null;
-  }
+    if (!input.tts || input.tts.provider === "none" || !input.ttsText) {
+      return null;
+    }
 
   const ext = input.tts.format === "wav" ? "wav" : "mp3";
   const outPath = path.join(workDir, `voice.${ext}`);
@@ -57,4 +58,8 @@ export async function resolveVoiceTrack(input: PlanInput, workDir: string): Prom
   const buf = new Uint8Array(await resp.arrayBuffer());
   await fs.writeFile(outPath, buf);
   return outPath;
+  } catch (error: any) {
+    log.error(`TTS Error: ${error.message}`);
+    throw new Error(`TTS failed: ${error.message}`);
+  }
 }

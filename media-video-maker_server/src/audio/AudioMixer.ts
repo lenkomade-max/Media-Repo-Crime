@@ -35,10 +35,10 @@ export function buildAudioFilter({
       const attack = ducking.attack ?? 5;
       const release = ducking.release ?? 250;
       const makeup = ducking.musicDuckDb ?? 8;
-      chains.push(`[music0]${voiceInLabel.slice(0,-1)}]sidechaincompress=threshold=${th}:ratio=${ratio}:attack=${attack}:release=${release}:makeup=${makeup}[amix]`);
+      chains.push(`[music0]${voiceInLabel}sidechaincompress=threshold=${th}:ratio=${ratio}:attack=${attack}:release=${release}:makeup=${makeup}[amix]`);
       return { chain: chains.join(";"), finalLabel: "[amix]" };
     } else {
-      chains.push(`[music0]${voiceInLabel.slice(0,-1)}]amix=inputs=2:normalize=0[amix]`);
+      chains.push(`[music0]${voiceInLabel}amix=inputs=2:normalize=0[amix]`);
       return { chain: chains.join(";"), finalLabel: "[amix]" };
     }
   }

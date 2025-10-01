@@ -111,7 +111,7 @@ app.post("/mcp/subtitles/generate", express.json({ limit: "2mb" }), async (req, 
   const model: string = req.body?.model || "base";
   if (!audioPath) return res.status(400).json({ error: "audioPath required" });
   try {
-    const workDir = path.join("/app/output", `mcp_stt_${uuidv4()}`);
+    const workDir = path.join(process.cwd(), "output", `mcp_stt_${uuidv4()}`);
     await fse.ensureDir(workDir);
     const srt = await transcribeWithWhisper(path.resolve(audioPath), workDir, model);
     res.json({ ok: true, srt });
