@@ -26,13 +26,14 @@ export type Ducking = z.infer<typeof DuckingSchema>;
 
 /** Провайдер TTS или внешний файл озвучки */
 export const TTSOptionsSchema = z.object({
-  provider: z.enum(["kokoro", "openai", "none"]).default("none"),
+  provider: z.enum(["kokoro", "openai", "none"]).default("kokoro"),
   endpoint: z.string().optional(),
-  voice: z.string().default("alloy"),
+  voice: z.string().default("en_male_2"),
   model: z.string().default("gpt-4o-mini-tts"),
   format: z.enum(["mp3", "wav"]).default("mp3"),
   speed: z.number().default(1.0),
-  // ДОБАВИТЬ:
+  pitch: z.number().optional(),
+  volume: z.number().optional(),
   download: z.boolean().optional(), // Для внешних TTS файлов
 });
 export type TTSOptions = z.infer<typeof TTSOptionsSchema>;
@@ -348,6 +349,13 @@ export const PlanInputSchema = z.object({
   // Новая структура timeline с video overlays
   timeline: TimelineSchema.optional(),
   videoOverlays: z.array(VideoOverlaySchema).optional(),
+  
+  // Опции для Whisper транскрипции
+  whisperOptions: z.object({
+    model: z.string().default("base"),
+    language: z.string().optional(),
+    outputFormat: z.string().default("srt")
+  }).optional(),
 });
 export type PlanInput = z.infer<typeof PlanInputSchema>;
 
