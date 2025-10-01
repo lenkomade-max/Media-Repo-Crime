@@ -42,7 +42,7 @@
     {
       "target": "top",
       "text": "Serial Killer Confessed to 42 Murders Then Escaped Jail 🚨💀 #DetroitEscape",
-      "position": {"x": 0, "y": 50},
+      "position": {"x": 0, "y": 50, "anchor": "top"},
       "startSec": 0,
       "endSec": 60,
       "style": {
@@ -56,7 +56,7 @@
     {
       "target": "bottom",
       "text": "Detroit's Worst Serial Killer Broke Out of Jail 🔓💀",
-      "position": {"x": 0, "y": 80},
+      "position": {"x": 0, "y": 80, "anchor": "bottom"},
       "startSec": 0,
       "endSec": 60,
       "style": {
