@@ -1,0 +1,10 @@
+{
+  "timestamp": "2025-10-02T17:35:30.750275",
+  "test_results": {
+    "services_check": true,
+    "workflow_status": true,
+    "mcp_test": false,
+    "n8n_test": false
+  },
+  "work_directory": "/Users/user/media-video-maker/n8n_perfect_workspace"
+}

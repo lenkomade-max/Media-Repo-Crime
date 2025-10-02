@@ -1,0 +1,199 @@
+{
+  "name": "🎬 Рабочий Crime Workflow - БЕЗ TTS",
+  "active": true,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "🚀 Старт",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "return {\n  json: {\n    \"files\": [\n      {\"id\": \"crime1\", \"src\": \"/root/video_factory/prepared/crime1.jpg\", \"type\": \"photo\", \"durationSec\": 6},\n      {\"id\": \"crime2\", \"src\": \"/root/video_factory/prepared/crime2.jpg\", \"type\": \"photo\", \"durationSec\": 6},\n      {\"id\": \"crime3\", \"src\": \"/root/video_factory/prepared/crime3.jpg\", \"type\": \"photo\", \"durationSec\": 6},\n      {\"id\": \"crime4\", \"src\": \"/root/video_factory/prepared/crime4.jpg\", \"type\": \"photo\", \"durationSec\": 6},\n      {\"id\": \"crime5\", \"src\": \"/root/video_factory/prepared/crime5.jpg\", \"type\": \"photo\", \"durationSec\": 6},\n      {\"id\": \"crime6\", \"src\": \"/root/video_factory/prepared/crime6.jpg\", \"type\": \"photo\", \"durationSec\": 6},\n      {\"id\": \"crime7\", \"src\": \"/root/video_factory/prepared/crime7.jpg\", \"type\": \"photo\", \"durationSec\": 6},\n      {\"id\": \"crime8\", \"src\": \"/root/video_factory/prepared/crime8.jpg\", \"type\": \"photo\", \"durationSec\": 6},\n      {\"id\": \"crime9\", \"src\": \"/root/video_factory/prepared/crime9.jpg\", \"type\": \"photo\", \"durationSec\": 6},\n      {\"id\": \"crime10\", \"src\": \"/root/video_factory/prepared/crime10.jpg\", \"type\": \"photo\", \"durationSec\": 6}\n    ],\n    \"width\": 1080,\n    \"height\": 1920,\n    \"fps\": 30,\n    \"outputFormat\": \"mp4\",\n    \"music\": \"/root/video_factory/prepared/crime_music.mp3\",\n    \"musicVolumeDb\": -12\n  }\n};"
+      },
+      "id": "prepare-payload",
+      "name": "📋 Подготовка данных",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://178.156.142.35:4123/api/create-video",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "files",
+              "value": "={{ $json.files }}"
+            },
+            {
+              "name": "width",
+              "value": "={{ $json.width }}"
+            },
+            {
+              "name": "height", 
+              "value": "={{ $json.height }}"
+            },
+            {
+              "name": "fps",
+              "value": "={{ $json.fps }}"
+            },
+            {
+              "name": "outputFormat",
+              "value": "={{ $json.outputFormat }}"
+            },
+            {
+              "name": "music",
+              "value": "={{ $json.music }}"
+            },
+            {
+              "name": "musicVolumeDb",
+              "value": "={{ $json.musicVolumeDb }}"
+            }
+          ]
+        }
+      },
+      "id": "create-video",
+      "name": "🎬 Создать видео",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nconst jobId = response.id;\n\nreturn {\n  json: {\n    jobId: jobId,\n    status: response.status,\n    message: `Видео создается... ID: ${jobId}`\n  }\n};"
+      },
+      "id": "extract-job-id",
+      "name": "📋 Получить ID задачи",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "amount": 30,
+        "unit": "seconds"
+      },
+      "id": "wait-processing",
+      "name": "⏳ Ждать обработку",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "url": "=http://178.156.142.35:4123/api/status/{{ $json.jobId }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "check-status",
+      "name": "📊 Проверить статус",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const status = $input.first().json;\n\nreturn {\n  json: {\n    jobId: status.id,\n    state: status.state,\n    output: status.output,\n    message: status.state === 'done' ? `✅ Видео готово: ${status.output}` : `⏳ Статус: ${status.state}`,\n    videoPath: status.output\n  }\n};"
+      },
+      "id": "process-result",
+      "name": "✅ Результат",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1560, 300]
+    }
+  ],
+  "connections": {
+    "manual-trigger": {
+      "main": [
+        [
+          {
+            "node": "prepare-payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "prepare-payload": {
+      "main": [
+        [
+          {
+            "node": "create-video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create-video": {
+      "main": [
+        [
+          {
+            "node": "extract-job-id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extract-job-id": {
+      "main": [
+        [
+          {
+            "node": "wait-processing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "wait-processing": {
+      "main": [
+        [
+          {
+            "node": "check-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check-status": {
+      "main": [
+        [
+          {
+            "node": "process-result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

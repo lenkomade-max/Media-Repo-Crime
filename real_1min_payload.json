@@ -1,0 +1,124 @@
+{
+  "files": [
+    {
+      "id": "scene_01",
+      "src": "/tmp/real_n8n_test/scene_01.jpg",
+      "type": "photo",
+      "durationSec": 7.5
+    },
+    {
+      "id": "scene_02",
+      "src": "/tmp/real_n8n_test/scene_02.jpg",
+      "type": "photo",
+      "durationSec": 7.5
+    },
+    {
+      "id": "scene_03",
+      "src": "/tmp/real_n8n_test/scene_03.jpg",
+      "type": "photo",
+      "durationSec": 7.5
+    },
+    {
+      "id": "scene_04",
+      "src": "/tmp/real_n8n_test/scene_04.jpg",
+      "type": "photo",
+      "durationSec": 7.5
+    },
+    {
+      "id": "scene_05",
+      "src": "/tmp/real_n8n_test/scene_05.jpg",
+      "type": "photo",
+      "durationSec": 7.5
+    },
+    {
+      "id": "scene_06",
+      "src": "/tmp/real_n8n_test/scene_06.jpg",
+      "type": "photo",
+      "durationSec": 7.5
+    },
+    {
+      "id": "scene_07",
+      "src": "/tmp/real_n8n_test/scene_07.jpg",
+      "type": "photo",
+      "durationSec": 7.5
+    },
+    {
+      "id": "scene_08",
+      "src": "/tmp/real_n8n_test/scene_08.jpg",
+      "type": "photo",
+      "durationSec": 7.5
+    }
+  ],
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "durationPerPhoto": 7.5,
+  "outputFormat": "mp4",
+  "tts": {
+    "provider": "kokoro",
+    "voice": "default"
+  },
+  "ttsText": "The Chicago Midnight Killer struck again last night. Detective Sarah Martinez arrived at the crime scene in the abandoned warehouse district. Blood stains formed a mysterious pattern on the concrete floor. The victim, a young journalist, had been investigating illegal pharmaceutical experiments. Each murder victim bore the same ancient symbol carved deep into their skin. The symbol connected all victims to a secret cult operating in the city shadows. Detective Martinez discovered the pharmaceutical company was using homeless people as test subjects. The experiments were creating enhanced soldiers with superhuman abilities. Her investigation revealed shocking corruption reaching the highest levels of city government. The killer wasn't random - someone with inside knowledge was eliminating witnesses. Martinez realized her own partner Detective Johnson was feeding information to the murderer. The final confrontation took place in the same warehouse where the first victim died. Johnson revealed the pharmaceutical company was preparing to release enhanced soldiers nationwide. Martinez had to choose between her loyalty to her partner and her duty to justice. In a dramatic shootout, she chose justice and stopped the conspiracy. The truth was more terrifying than anyone imagined - the enhanced soldiers were already among us.",
+  "subtitles": [
+    {
+      "start": 0,
+      "end": 7.5,
+      "text": "The Chicago Midnight Killer struck again"
+    },
+    {
+      "start": 7.5,
+      "end": 15,
+      "text": "Detective Martinez arrived at crime scene"
+    },
+    {
+      "start": 15,
+      "end": 22.5,
+      "text": "Blood stains formed mysterious pattern"
+    },
+    {
+      "start": 22.5,
+      "end": 30,
+      "text": "Victim was investigating illegal experiments"
+    },
+    {
+      "start": 30,
+      "end": 37.5,
+      "text": "Ancient symbol connected all victims"
+    },
+    {
+      "start": 37.5,
+      "end": 45,
+      "text": "Secret cult operating in city shadows"
+    },
+    {
+      "start": 45,
+      "end": 52.5,
+      "text": "Pharmaceutical company using test subjects"
+    },
+    {
+      "start": 52.5,
+      "end": 60,
+      "text": "Final confrontation - justice prevailed"
+    }
+  ],
+  "burnSubtitles": true,
+  "effects": [
+    {
+      "kind": "zoom",
+      "params": {
+        "startScale": 1.0,
+        "endScale": 1.4
+      }
+    }
+  ],
+  "overlays": [],
+  "musicVolumeDb": -12,
+  "ducking": {
+    "enabled": true,
+    "musicDuckDb": 10,
+    "threshold": 0.05,
+    "ratio": 8,
+    "attack": 5,
+    "release": 250
+  }
+}

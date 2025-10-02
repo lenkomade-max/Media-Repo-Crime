@@ -1,0 +1,82 @@
+{
+  "files": [
+    {
+      "id": "scene_1",
+      "src": "/tmp/test_images/crime_scene.jpg",
+      "type": "photo",
+      "durationSec": 2
+    },
+    {
+      "id": "scene_2", 
+      "src": "/tmp/test_images/crime_scene.jpg",
+      "type": "photo",
+      "durationSec": 2
+    },
+    {
+      "id": "scene_3",
+      "src": "/tmp/test_images/crime_scene.jpg", 
+      "type": "photo",
+      "durationSec": 2
+    },
+    {
+      "id": "scene_4",
+      "src": "/tmp/test_images/crime_scene.jpg",
+      "type": "photo", 
+      "durationSec": 2
+    },
+    {
+      "id": "scene_5",
+      "src": "/tmp/test_images/crime_scene.jpg",
+      "type": "photo",
+      "durationSec": 2
+    }
+  ],
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "durationPerPhoto": 2,
+  "outputFormat": "mp4",
+  "tts": {
+    "provider": "kokoro",
+    "voice": "default"
+  },
+  "ttsText": "A mysterious murder case shocked the entire city. Detective Sarah Martinez received a call that would change everything. The victim was found in an abandoned warehouse, but this wasn't ordinary. The evidence pointed to something darker - a serial killer operating in shadows. Each victim had the same mysterious symbol, connecting them to an ancient cult. Detective Martinez discovered all victims were investigating the same pharmaceutical company conducting illegal experiments. The killer had inside knowledge, knowing which investigators were getting too close. The final twist - her own partner Detective Johnson was feeding information to the killer. In a dramatic warehouse confrontation, Martinez chose between loyalty and justice. The truth was more terrifying than anyone imagined.",
+  "subtitles": [
+    {
+      "start": 0,
+      "end": 10,
+      "text": "A mysterious murder case shocked the city"
+    },
+    {
+      "start": 10,
+      "end": 20,
+      "text": "Detective Martinez received the call"
+    },
+    {
+      "start": 20,
+      "end": 30,
+      "text": "Evidence pointed to a serial killer"
+    },
+    {
+      "start": 30,
+      "end": 40,
+      "text": "Each victim had the same symbol"
+    },
+    {
+      "start": 40,
+      "end": 50,
+      "text": "The truth was more terrifying than imagined"
+    }
+  ],
+  "burnSubtitles": true,
+  "effects": [
+    {
+      "kind": "zoom",
+      "params": {
+        "startScale": 1.0,
+        "endScale": 1.2
+      }
+    }
+  ],
+  "overlays": []
+}

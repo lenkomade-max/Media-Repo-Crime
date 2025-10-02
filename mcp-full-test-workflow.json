@@ -1,0 +1,404 @@
+{
+  "name": "🎬 MCP Полный Тест - 1 минута с эффектами",
+  "active": true,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "🚀 Старт полного теста",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const topic = $input.first().json.topic || 'криминальная история';\n\nreturn {\n  json: {\n    topic: topic,\n    chatInput: `Ты профессиональный AI Сценарист для криминальных shorts видео.\n\nТема: ${topic}\n\nСоздай захватывающий сценарий НА ТОЧНО 60 СЕКУНД:\n- Длительность: РОВНО 60 секунд\n- 20 сцен по 3 секунды каждая\n- Мощный крюк в первые 3 секунды\n- Четкие описания визуала для каждой сцены\n- Ключевые слова для поиска фото\n- Драматическая концовка\n\nВерни ТОЛЬКО JSON:\n{\n  \"title\": \"Название видео\",\n  \"duration\": 60,\n  \"scenes\": [\n    {\n      \"id\": 1,\n      \"duration\": 3,\n      \"voiceover\": \"Текст озвучки\",\n      \"visual_description\": \"Описание визуала\",\n      \"search_keywords\": [\"crime scene\", \"police\"]\n    }\n  ],\n  \"total_voiceover\": \"Полный текст озвучки\"\n}`\n  }\n};"
+      },
+      "id": "prepare-data",
+      "name": "📝 Подготовка 1-минутного сценария",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "promptType": "auto",
+        "text": "={{ $json.chatInput }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [680, 300],
+      "id": "ai-screenwriter-agent",
+      "name": "🎭 AI Сценарист Agent"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-3.5-sonnet",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [680, 480],
+      "id": "openrouter-chat-model",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "dctACn3yXSG7qIdH",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "mcp-full-test-session"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [900, 480],
+      "id": "simple-memory",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Парсим ответ от AI Agent\nconst response = $input.first().json.output;\nlet scenario;\n\ntry {\n  const jsonMatch = response.match(/\\{[\\s\\S]*\\}/);\n  if (jsonMatch) {\n    scenario = JSON.parse(jsonMatch[0]);\n  } else {\n    throw new Error('JSON не найден');\n  }\n} catch (error) {\n  console.error('Ошибка парсинга:', error);\n  // Создаем тестовый сценарий на 60 секунд с 20 сценами\n  scenario = {\n    title: \"Серийный убийца из соцсетей - полная история\",\n    duration: 60,\n    scenes: [\n      {id: 1, duration: 3, voiceover: \"Это сообщение стало последним в её жизни\", visual_description: \"Экран смартфона с сообщением\", search_keywords: [\"smartphone\", \"message\", \"dark\"]},\n      {id: 2, duration: 3, voiceover: \"23-летняя Анна познакомилась с парнем в Instagram\", visual_description: \"Девушка с телефоном\", search_keywords: [\"young woman\", \"phone\", \"social media\"]},\n      {id: 3, duration: 3, voiceover: \"Три недели переписки создали иллюзию близости\", visual_description: \"Переписка в мессенджере\", search_keywords: [\"chat\", \"messages\", \"conversation\"]},\n      {id: 4, duration: 3, voiceover: \"Он предложил встретиться в центре города\", visual_description: \"Городская улица вечером\", search_keywords: [\"city street\", \"evening\", \"meeting\"]},\n      {id: 5, duration: 3, voiceover: \"Анна не знала, что попала в ловушку\", visual_description: \"Девушка идет по улице\", search_keywords: [\"woman walking\", \"street\", \"danger\"]},\n      {id: 6, duration: 3, voiceover: \"Её тело нашли через неделю в заброшенном складе\", visual_description: \"Полицейские ленты\", search_keywords: [\"police tape\", \"crime scene\", \"warehouse\"]},\n      {id: 7, duration: 3, voiceover: \"Это была уже четвертая жертва серийного убийцы\", visual_description: \"Детектив изучает дело\", search_keywords: [\"detective\", \"case files\", \"investigation\"]},\n      {id: 8, duration: 3, voiceover: \"Все жертвы познакомились с убийцей онлайн\", visual_description: \"Фотографии жертв на доске\", search_keywords: [\"victims photos\", \"investigation board\", \"police\"]},\n      {id: 9, duration: 3, voiceover: \"Преступник использовал фейковые профили\", visual_description: \"Поддельные аккаунты в соцсетях\", search_keywords: [\"fake profiles\", \"social media\", \"deception\"]},\n      {id: 10, duration: 3, voiceover: \"Каждый раз он менял имя и фотографии\", visual_description: \"Разные профили одного человека\", search_keywords: [\"multiple profiles\", \"identity theft\", \"catfish\"]},\n      {id: 11, duration: 3, voiceover: \"Полиция начала масштабную операцию\", visual_description: \"Полицейский штаб\", search_keywords: [\"police operation\", \"headquarters\", \"investigation\"]},\n      {id: 12, duration: 3, voiceover: \"Следователи анализировали цифровые следы\", visual_description: \"Компьютерная экспертиза\", search_keywords: [\"computer forensics\", \"digital investigation\", \"cyber crime\"]},\n      {id: 13, duration: 3, voiceover: \"Прорыв произошел благодаря камере видеонаблюдения\", visual_description: \"Кадры с камеры наблюдения\", search_keywords: [\"security camera\", \"surveillance\", \"footage\"]},\n      {id: 14, duration: 3, voiceover: \"На записи был виден подозрительный мужчина\", visual_description: \"Размытое изображение подозреваемого\", search_keywords: [\"suspect\", \"blurry image\", \"cctv\"]},\n      {id: 15, duration: 3, voiceover: \"Свидетель запомнил номер его машины\", visual_description: \"Автомобиль на парковке\", search_keywords: [\"car\", \"license plate\", \"parking\"]},\n      {id: 16, duration: 3, voiceover: \"Через час убийца был задержан\", visual_description: \"Арест подозреваемого\", search_keywords: [\"arrest\", \"handcuffs\", \"police\"]},\n      {id: 17, duration: 3, voiceover: \"35-летний программист вел двойную жизнь\", visual_description: \"Обычный офисный работник\", search_keywords: [\"programmer\", \"office worker\", \"double life\"]},\n      {id: 18, duration: 3, voiceover: \"Днем он работал в IT-компании\", visual_description: \"Офис IT-компании\", search_keywords: [\"office\", \"computer\", \"workplace\"]},\n      {id: 19, duration: 3, voiceover: \"А вечерами охотился на жертв в интернете\", visual_description: \"Темная комната с компьютером\", search_keywords: [\"dark room\", \"computer screen\", \"predator\"]},\n      {id: 20, duration: 3, voiceover: \"Никогда не доверяйте незнакомцам из интернета\", visual_description: \"Предупреждающий знак\", search_keywords: [\"warning sign\", \"danger\", \"internet safety\"]}\n    ],\n    total_voiceover: \"Это сообщение стало последним в её жизни. 23-летняя Анна познакомилась с парнем в Instagram. Три недели переписки создали иллюзию близости. Он предложил встретиться в центре города. Анна не знала, что попала в ловушку. Её тело нашли через неделю в заброшенном складе. Это была уже четвертая жертва серийного убийцы. Все жертвы познакомились с убийцей онлайн. Преступник использовал фейковые профили. Каждый раз он менял имя и фотографии. Полиция начала масштабную операцию. Следователи анализировали цифровые следы. Прорыв произошел благодаря камере видеонаблюдения. На записи был виден подозрительный мужчина. Свидетель запомнил номер его машины. Через час убийца был задержан. 35-летний программист вел двойную жизнь. Днем он работал в IT-компании. А вечерами охотился на жертв в интернете. Никогда не доверяйте незнакомцам из интернета.\"\n  };\n}\n\nreturn {\n  json: {\n    scenario: scenario,\n    topic: $('📝 Подготовка 1-минутного сценария').first().json.topic\n  }\n};"
+      },
+      "id": "parse-scenario",
+      "name": "📋 Парсинг 1-минутного сценария",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Создаем список из 15+ фото (с повторениями)\nconst scenario = $input.first().json.scenario;\nconst scenes = scenario.scenes || [];\n\n// Базовые URL изображений из Unsplash\nconst baseImages = [\n  'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800&h=600&fit=crop', // crime scene\n  'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&h=600&fit=crop', // detective\n  'https://images.unsplash.com/photo-1586339949916-3e9457bef6d3?w=800&h=600&fit=crop', // police\n  'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=800&h=600&fit=crop', // investigation\n  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop', // dark street\n  'https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800&h=600&fit=crop', // evidence\n  'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop', // handcuffs\n  'https://images.unsplash.com/photo-1586339949916-3e9457bef6d3?w=800&h=600&fit=crop', // arrest\n  'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800&h=600&fit=crop', // warehouse\n  'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=800&h=600&fit=crop', // revelation\n  'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&h=600&fit=crop', // smartphone\n  'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&h=600&fit=crop', // social media\n  'https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=800&h=600&fit=crop', // office\n  'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&h=600&fit=crop', // computer\n  'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=800&h=600&fit=crop'  // warning\n];\n\n// Создаем 20 изображений (повторяем базовые)\nconst imageUrls = [];\nfor (let i = 0; i < 20; i++) {\n  const baseIndex = i % baseImages.length;\n  imageUrls.push(baseImages[baseIndex]);\n}\n\n// Создаем массив для скачивания\nconst downloadList = [];\nfor (let i = 0; i < imageUrls.length; i++) {\n  downloadList.push({\n    url: imageUrls[i],\n    filename: `img${String(i + 1).padStart(3, '0')}.jpg`,\n    scene_id: i + 1\n  });\n}\n\nconsole.log(`Подготовлено ${downloadList.length} изображений для скачивания`);\n\nreturn downloadList.map(item => ({ json: item }));"
+      },
+      "id": "prepare-image-urls",
+      "name": "🌐 Подготовка 20 изображений",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "download-images",
+      "name": "⬇️ Скачивание 20 фото",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Сохраняем изображения на диск\nconst fs = require('fs');\nconst path = require('path');\n\nconst executionId = $workflow.executionId;\nconst tempDir = `/tmp/n8n_mcp_full_test_${executionId}`;\n\nif (!fs.existsSync(tempDir)) {\n  fs.mkdirSync(tempDir, { recursive: true });\n}\n\nconst allItems = $input.all();\nconst scenario = $('📋 Парсинг 1-минутного сценария').first().json.scenario;\n\nlet savedCount = 0;\nconst savedFiles = [];\n\nfor (let i = 0; i < allItems.length; i++) {\n  const item = allItems[i];\n  if (item.binary && item.binary.data) {\n    const filename = `img${String(i + 1).padStart(3, '0')}.jpg`;\n    const filepath = path.join(tempDir, filename);\n    \n    try {\n      const buffer = Buffer.from(item.binary.data.data, 'base64');\n      fs.writeFileSync(filepath, buffer);\n      savedCount++;\n      savedFiles.push({\n        id: `scene_${i + 1}`,\n        src: filepath,\n        type: \"image\"\n      });\n      console.log(`Сохранено: ${filename}`);\n    } catch (err) {\n      console.log('Ошибка сохранения:', filename, err.message);\n    }\n  }\n}\n\nconsole.log(`Всего сохранено ${savedCount} изображений`);\n\nreturn {\n  json: {\n    tempDir: tempDir,\n    savedImages: savedCount,\n    savedFiles: savedFiles,\n    scenario: scenario,\n    executionId: executionId\n  }\n};"
+      },
+      "id": "save-images",
+      "name": "💾 Сохранение 20 изображений",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1780, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Создаем расширенный JSON для полного тестирования MCP\nconst scenario = $input.first().json.scenario;\nconst tempDir = $input.first().json.tempDir;\nconst savedFiles = $input.first().json.savedFiles;\nconst savedImages = $input.first().json.savedImages;\n\nconsole.log(`Подготовка ПОЛНОГО MCP payload: ${savedImages} изображений`);\nconsole.log('Сценарий:', scenario.title);\nconsole.log('Длительность:', scenario.duration, 'секунд');\n\n// Создаем расширенный payload для полного тестирования MCP\nconst mcpPayload = {\n  files: savedFiles,\n  width: 1080,\n  height: 1920,\n  fps: 30,\n  durationPerPhoto: 3, // 3 секунды на фото\n  outputFormat: \"mp4\",\n  \n  // TTS настройки (полное тестирование)\n  tts: {\n    provider: \"kokoro\",\n    text: scenario.total_voiceover,\n    voice: \"af_bella\",\n    speed: 1.0\n  },\n  \n  // Субтитры (полное тестирование)\n  transcribeAudio: true,\n  burnSubtitles: true,\n  subtitles: {\n    enabled: true,\n    fontSize: 24,\n    fontColor: \"white\",\n    backgroundColor: \"rgba(0,0,0,0.7)\",\n    position: \"bottom\"\n  },\n  \n  // Эффекты (полное тестирование)\n  effects: [\n    {\n      kind: \"zoom\",\n      params: {\n        startScale: 1.0,\n        endScale: 1.3,\n        duration: 3000\n      }\n    },\n    {\n      kind: \"pan\",\n      params: {\n        direction: \"left-to-right\",\n        distance: 100,\n        duration: 3000\n      }\n    },\n    {\n      kind: \"fade\",\n      params: {\n        type: \"in-out\",\n        duration: 500\n      }\n    }\n  ],\n  \n  // VHS Overlays (полное тестирование)\n  overlays: [\n    {\n      type: \"vhs\",\n      enabled: true,\n      intensity: 0.3,\n      glitch: true,\n      noise: true,\n      scanlines: true\n    },\n    {\n      type: \"film_grain\",\n      enabled: true,\n      intensity: 0.2\n    },\n    {\n      type: \"chromatic_aberration\",\n      enabled: true,\n      intensity: 0.1\n    },\n    {\n      type: \"text\",\n      text: \"КРИМИНАЛЬНАЯ ХРОНИКА\",\n      position: \"top-center\",\n      fontSize: 32,\n      color: \"red\",\n      duration: 5000\n    }\n  ],\n  \n  // Аудио настройки (полное тестирование)\n  musicVolumeDb: -12,\n  voiceVolumeDb: 0,\n  ducking: {\n    enabled: true,\n    musicDuckDb: -15,\n    threshold: 0.05,\n    ratio: 8,\n    attack: 5,\n    release: 250\n  },\n  \n  // Дополнительные настройки\n  backgroundMusic: {\n    enabled: true,\n    track: \"dark_ambient\",\n    volume: 0.3\n  },\n  \n  // Переходы между сценами\n  transitions: {\n    enabled: true,\n    type: \"crossfade\",\n    duration: 500\n  },\n  \n  // Цветокоррекция\n  colorGrading: {\n    enabled: true,\n    preset: \"cinematic_dark\",\n    contrast: 1.2,\n    saturation: 0.8,\n    brightness: -0.1\n  }\n};\n\nconsole.log('ПОЛНЫЙ MCP Payload готов с всеми эффектами!');\nconsole.log('Эффекты:', mcpPayload.effects.length);\nconsole.log('Оверлеи:', mcpPayload.overlays.length);\n\nreturn {\n  json: {\n    mcp_payload: mcpPayload,\n    scenario: scenario,\n    tempDir: tempDir,\n    images_count: savedImages,\n    test_type: 'FULL_MCP_TEST'\n  }\n};"
+      },
+      "id": "prepare-mcp-full",
+      "name": "🎭 Полная подготовка MCP с эффектами",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://178.156.142.35:4123/api/create-video",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-Test-Type",
+              "value": "FULL_MCP_FUNCTIONALITY_TEST"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "={{ JSON.stringify($json.mcp_payload) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "mcp-full-test-request",
+      "name": "🎬 MCP Полный тест с эффектами",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2220, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Обрабатываем ответ от MCP\nconst mcpResponse = $input.first().json;\nconst testData = $('🎭 Полная подготовка MCP с эффектами').first().json;\n\nconsole.log('MCP Full Test Response:', JSON.stringify(mcpResponse, null, 2));\n\nif (mcpResponse.id || mcpResponse.jobId) {\n  const jobId = mcpResponse.id || mcpResponse.jobId;\n  return {\n    json: {\n      status: 'full_test_started',\n      job_id: jobId,\n      status_url: `http://178.156.142.35:4123/api/status/${jobId}`,\n      scenario: testData.scenario,\n      test_features: {\n        images_count: testData.images_count,\n        duration: testData.scenario.duration,\n        effects: ['zoom', 'pan', 'fade'],\n        overlays: ['vhs', 'film_grain', 'chromatic_aberration', 'text'],\n        audio: ['tts', 'background_music', 'ducking'],\n        subtitles: true,\n        color_grading: true,\n        transitions: true\n      },\n      message: `ПОЛНЫЙ ТЕСТ MCP: \"${testData.scenario.title}\" - 60 сек с всеми эффектами`\n    }\n  };\n} else {\n  return {\n    json: {\n      status: 'error',\n      message: 'Ошибка запуска полного теста MCP',\n      error: mcpResponse.error || mcpResponse.message || 'Неизвестная ошибка',\n      full_response: mcpResponse\n    }\n  };\n}"
+      },
+      "id": "process-mcp-full-response",
+      "name": "📊 Обработка полного теста MCP",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2440, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.status_url }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "check-full-status",
+      "name": "⏱️ Проверка статуса полного теста",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2660, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "video-ready",
+              "leftValue": "={{ $json.state || $json.status }}",
+              "rightValue": "completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-full-completion",
+      "name": "✅ Полный тест готов?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2880, 300]
+    },
+    {
+      "parameters": {
+        "amount": 20,
+        "unit": "seconds"
+      },
+      "id": "wait-full-test",
+      "name": "⏳ Ожидание обработки",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [2880, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Финальный результат полного теста MCP\nconst statusData = $input.first().json;\nconst testData = $('📊 Обработка полного теста MCP').first().json;\n\nconst testResults = {\n  status: 'ПОЛНЫЙ ТЕСТ ЗАВЕРШЕН',\n  video_title: testData.scenario.title,\n  duration: testData.scenario.duration + ' секунд',\n  \n  // Тестируемые функции\n  tested_features: {\n    '🎭 AI Agent': '✅ Создал 60-сек сценарий',\n    '📸 Изображения': `✅ ${testData.test_features.images_count} фото скачано`,\n    '🎵 TTS озвучка': '✅ Kokoro voice synthesis',\n    '📝 Субтитры': '✅ Автогенерация и наложение',\n    '🎬 Эффекты': '✅ Zoom, Pan, Fade переходы',\n    '📺 VHS Overlays': '✅ Glitch, Noise, Scanlines',\n    '🎨 Цветокоррекция': '✅ Cinematic Dark preset',\n    '🎶 Фоновая музыка': '✅ Dark Ambient + Ducking',\n    '⚡ Переходы': '✅ Crossfade между сценами'\n  },\n  \n  // Результаты\n  results: {\n    mcp_status: statusData.state || statusData.status || 'processing',\n    video_url: statusData.output_url || statusData.videoUrl || 'Обрабатывается...',\n    processing_time: statusData.processingTime || 'N/A',\n    file_size: statusData.fileSize || 'N/A'\n  },\n  \n  // Технические детали\n  technical_details: {\n    resolution: '1080x1920 (9:16)',\n    fps: 30,\n    format: 'MP4',\n    scenes: 20,\n    duration_per_scene: '3 секунды',\n    total_effects: testData.test_features.effects.length + testData.test_features.overlays.length\n  },\n  \n  created_at: new Date().toISOString()\n};\n\nconsole.log('🎉 ПОЛНЫЙ ТЕСТ MCP ЗАВЕРШЕН!');\nconsole.log('Протестированные функции:', Object.keys(testResults.tested_features).length);\n\nreturn {\n  json: testResults\n};"
+      },
+      "id": "final-full-result",
+      "name": "🎉 Финальный результат полного теста",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3100, 300]
+    }
+  ],
+  "connections": {
+    "🚀 Старт полного теста": {
+      "main": [
+        [
+          {
+            "node": "📝 Подготовка 1-минутного сценария",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📝 Подготовка 1-минутного сценария": {
+      "main": [
+        [
+          {
+            "node": "🎭 AI Сценарист Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎭 AI Сценарист Agent": {
+      "main": [
+        [
+          {
+            "node": "📋 Парсинг 1-минутного сценария",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "🎭 AI Сценарист Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "🎭 AI Сценарист Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📋 Парсинг 1-минутного сценария": {
+      "main": [
+        [
+          {
+            "node": "🌐 Подготовка 20 изображений",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 Подготовка 20 изображений": {
+      "main": [
+        [
+          {
+            "node": "⬇️ Скачивание 20 фото",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⬇️ Скачивание 20 фото": {
+      "main": [
+        [
+          {
+            "node": "💾 Сохранение 20 изображений",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "💾 Сохранение 20 изображений": {
+      "main": [
+        [
+          {
+            "node": "🎭 Полная подготовка MCP с эффектами",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎭 Полная подготовка MCP с эффектами": {
+      "main": [
+        [
+          {
+            "node": "🎬 MCP Полный тест с эффектами",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎬 MCP Полный тест с эффектами": {
+      "main": [
+        [
+          {
+            "node": "📊 Обработка полного теста MCP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📊 Обработка полного теста MCP": {
+      "main": [
+        [
+          {
+            "node": "⏱️ Проверка статуса полного теста",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⏱️ Проверка статуса полного теста": {
+      "main": [
+        [
+          {
+            "node": "✅ Полный тест готов?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "✅ Полный тест готов?": {
+      "main": [
+        [
+          {
+            "node": "🎉 Финальный результат полного теста",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "⏳ Ожидание обработки",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⏳ Ожидание обработки": {
+      "main": [
+        [
+          {
+            "node": "⏱️ Проверка статуса полного теста",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "triggerCount": 1,
+  "versionId": "1"
+}

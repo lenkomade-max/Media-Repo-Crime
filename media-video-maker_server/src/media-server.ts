@@ -70,6 +70,54 @@ app.get("/api/capabilities", (_req, res) => {
   });
 });
 
+// Создание криминального видео с автоматическими настройками
+app.post("/api/create-crime-video", async (req, res) => {
+  try {
+    const { script, hookText, baitText, images, duration } = req.body;
+    
+    if (!script || typeof script !== 'string') {
+      return res.status(400).json({
+        error: "Текст сценария обязателен",
+        code: "MISSING_SCRIPT"
+      });
+    }
+
+    // Создаем идеальное криминальное видео
+    const id = await media.createCrimeVideo(
+      script,
+      hookText,
+      baitText,
+      images,
+      duration
+    );
+    
+    log.info(`🎬 Создано криминальное видео ${id} со скриптом ${script.length} символов`);
+    
+    res.json({
+      id,
+      status: "queued",
+      progress: 0,
+      type: "crime_video",
+      script_length: script.length,
+      images: images || 30,
+      duration: duration || 60,
+      resolution: "1080x1920",
+      createdAt: new Date().toISOString(),
+      webhooks: {
+        status: `http://localhost:4123/api/status/${id}`,
+        sse: `http://localhost:5123/mcp/sse`
+      }
+    });
+  } catch (e: any) {
+    log.error(`❌ Ошибка создания криминального видео:`, e);
+    res.status(400).json({
+      error: e?.message || String(e),
+      code: "CRIME_VIDEO_ERROR",
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // Создание видео из JSON-сценария
 app.post("/api/create-video", async (req, res) => {
   try {

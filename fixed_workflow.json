@@ -1,0 +1,446 @@
+{
+  "name": "🎬 Правильная Автоматизация Видео (AI Agent)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "🚀 Запуск",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [460, 300],
+      "id": "ai-screenwriter-agent",
+      "name": "🎭 AI Сценарист Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "anthropic/claude-3.5-sonnet",
+          "cachedResultName": "Claude 3.5 Sonnet"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [460, 480],
+      "id": "openrouter-chat-model",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "dctACn3yXSG7qIdH",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdExpression": "={{ $workflow.executionId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [680, 480],
+      "id": "simple-memory",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Создаем промпт для AI Сценариста\nconst topic = $input.first().json.topic || 'криминальная история';\n\nconst prompt = `Ты AI Сценарист для криминальных shorts видео. Создай захватывающий сценарий.\n\nТема: ${topic}\n\nТребования:\n- Длительность: 45-60 секунд\n- 6-8 сцен по 6-10 секунд каждая\n- Захватывающий крюк в первые 3 секунды\n- Четкие тайминги\n- Описание визуала для каждой сцены\n- Ключевые слова для поиска фото\n\nВерни результат в JSON формате:\n{\n  \"title\": \"Название видео\",\n  \"hook\": \"Крюк для первых 3 секунд\",\n  \"duration\": 60,\n  \"scenes\": [\n    {\n      \"id\": 1,\n      \"duration\": 8,\n      \"voiceover\": \"Текст для озвучки\",\n      \"subtitle\": \"Субтитры\",\n      \"visual_description\": \"Описание что показать\",\n      \"search_keywords\": [\"crime scene\", \"police\"],\n      \"mood\": \"dark\"\n    }\n  ],\n  \"total_voiceover\": \"Полный текст озвучки\",\n  \"music_style\": \"dark_ambient\"\n}`;\n\nreturn {\n  json: {\n    chatInput: prompt,\n    topic: topic\n  }\n};"
+      },
+      "id": "prepare-screenwriter-prompt",
+      "name": "📝 Подготовка промпта сценариста",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Парсим ответ от AI Agent\nconst response = $input.first().json.output;\nlet scenario;\n\ntry {\n  const jsonMatch = response.match(/\\{[\\s\\S]*\\}/);\n  if (jsonMatch) {\n    scenario = JSON.parse(jsonMatch[0]);\n  } else {\n    throw new Error('JSON не найден в ответе');\n  }\n} catch (error) {\n  console.error('Ошибка парсинга сценария:', error);\n  scenario = {\n    title: \"Криминальная история - Тест\",\n    duration: 60,\n    scenes: [\n      {\n        id: 1,\n        duration: 10,\n        voiceover: \"В темном переулке произошло загадочное преступление\",\n        subtitle: \"Загадочное преступление\",\n        visual_description: \"Темная улица с полицейской лентой\",\n        search_keywords: [\"crime scene\", \"police tape\", \"dark street\"]\n      },\n      {\n        id: 2,\n        duration: 10,\n        voiceover: \"Детективы начали расследование этого дела\",\n        subtitle: \"Начало расследования\",\n        visual_description: \"Детективы изучают улики\",\n        search_keywords: [\"detective\", \"investigation\", \"evidence\"]\n      },\n      {\n        id: 3,\n        duration: 10,\n        voiceover: \"Каждая жертва имела одинаковый символ\",\n        subtitle: \"Мистический символ\",\n        visual_description: \"Древний символ на коже жертвы\",\n        search_keywords: [\"symbol\", \"victim\", \"mystery\"]\n      },\n      {\n        id: 4,\n        duration: 10,\n        voiceover: \"Расследование привело к фармацевтической компании\",\n        subtitle: \"Опасная компания\",\n        visual_description: \"Здание фармацевтической компании\",\n        search_keywords: [\"pharmaceutical\", \"company\", \"building\"]\n      },\n      {\n        id: 5,\n        duration: 10,\n        voiceover: \"Детектив Мартинес обнаружила предательство партнера\",\n        subtitle: \"Предательство партнера\",\n        visual_description: \"Драматическое противостояние\",\n        search_keywords: [\"betrayal\", \"partner\", \"confrontation\"]\n      },\n      {\n        id: 6,\n        duration: 10,\n        voiceover: \"Правда оказалась более ужасающей чем можно было представить\",\n        subtitle: \"Ужасающая правда\",\n        visual_description: \"Финальное раскрытие\",\n        search_keywords: [\"truth\", \"revelation\", \"shocking\"]\n      }\n    ],\n    total_voiceover: \"В темном переулке произошло загадочное преступление. Детективы начали расследование этого дела. Каждая жертва имела одинаковый символ. Расследование привело к фармацевтической компании. Детектив Мартинес обнаружила предательство партнера. Правда оказалась более ужасающей чем можно было представить.\",\n    music_style: \"dark_ambient\"\n  };\n}\n\nreturn {\n  json: {\n    scenario: scenario,\n    topic: $('📝 Подготовка промпта сценариста').first().json.topic\n  }\n};"
+      },
+      "id": "parse-scenario",
+      "name": "📋 Парсинг сценария",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1R8DSsDKqGBaBvI4D1T_L1AM9vHz0Y-Yq",
+            "mode": "list",
+            "cachedResultName": "Baza-n8n"
+          }
+        },
+        "options": {}
+      },
+      "id": "google-drive-search",
+      "name": "📁 AI Режиссер - Поиск в Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [1120, 300],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "XDM9FIbDJMpu7nGH",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}"
+        },
+        "options": {}
+      },
+      "id": "download-images",
+      "name": "⬇️ Скачивание найденных фото",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [1340, 300],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "XDM9FIbDJMpu7nGH",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const fs = require('fs');\nconst path = require('path');\n\nconst executionId = $workflow.executionId;\nconst tempDir = `/tmp/n8n_video_${executionId}`;\n\nif (!fs.existsSync(tempDir)) {\n  fs.mkdirSync(tempDir, { recursive: true });\n}\n\nconst allItems = $input.all();\nconst scenario = $('📋 Парсинг сценария').first().json.scenario;\n\nconsole.log('Всего скачано элементов:', allItems.length);\nconst validItems = allItems.filter(item => item.binary && item.binary.data);\nconsole.log('Элементов с данными:', validItems.length);\n\n// Берем до 10 изображений\nconst imageItems = validItems.slice(0, 10);\nlet savedCount = 0;\n\nfor (let i = 0; i < imageItems.length; i++) {\n  const item = imageItems[i];\n  const filename = `img${String(i + 1).padStart(3, '0')}.jpg`;\n  const filepath = path.join(tempDir, filename);\n  \n  try {\n    const buffer = Buffer.from(item.binary.data.data, 'base64');\n    fs.writeFileSync(filepath, buffer);\n    savedCount++;\n    console.log(`Сохранено: ${filename}`);\n  } catch (err) {\n    console.log('Ошибка сохранения:', filename, err.message);\n  }\n}\n\nconsole.log(`Сохранено ${savedCount} изображений`);\n\n// Проверяем достаточно ли фото\nconst requiredImages = scenario.scenes ? scenario.scenes.length : 6;\nconst needMoreImages = savedCount < requiredImages;\n\nreturn {\n  json: {\n    tempDir: tempDir,\n    savedImages: savedCount,\n    requiredImages: requiredImages,\n    needMoreImages: needMoreImages,\n    scenario: scenario,\n    executionId: executionId\n  }\n};"
+      },
+      "id": "save-and-analyze",
+      "name": "💾 Сохранение и анализ фото",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1560, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// AI Продюсер - собираем все медиафайлы и создаем JSON для MCP\nconst scenario = $('💾 Сохранение и анализ фото').first().json.scenario;\nconst tempDir = $('💾 Сохранение и анализ фото').first().json.tempDir;\nconst savedImages = $('💾 Сохранение и анализ фото').first().json.savedImages;\n\n// Формируем файлы для MCP\nconst files = [];\nconst scenes = scenario.scenes || [];\n\n// Используем сохраненные изображения\nfor (let i = 0; i < Math.min(scenes.length, savedImages); i++) {\n  const scene = scenes[i];\n  files.push({\n    id: `scene_${i + 1}`,\n    src: `${tempDir}/img${String(i + 1).padStart(3, '0')}.jpg`,\n    type: \"photo\",\n    durationSec: scene.duration || 10\n  });\n}\n\n// Если не хватает изображений, дублируем последнее\nwhile (files.length < scenes.length) {\n  const lastFile = files[files.length - 1];\n  if (lastFile) {\n    files.push({\n      id: `scene_${files.length + 1}`,\n      src: lastFile.src,\n      type: \"photo\",\n      durationSec: scenes[files.length].duration || 10\n    });\n  } else {\n    break;\n  }\n}\n\n// Создаем финальный JSON для MCP\nconst mcpPayload = {\n  files: files,\n  width: 1080,\n  height: 1920,\n  fps: 30,\n  outputFormat: \"mp4\",\n  tts: {\n    provider: \"kokoro\",\n    voice: \"default\"\n  },\n  ttsText: scenario.total_voiceover || \"Тестовый текст озвучки\",\n  subtitles: scenes.map((scene, index) => ({\n    start: scenes.slice(0, index).reduce((sum, s) => sum + (s.duration || 10), 0),\n    end: scenes.slice(0, index + 1).reduce((sum, s) => sum + (s.duration || 10), 0),\n    text: scene.subtitle || scene.voiceover || `Сцена ${index + 1}`\n  })),\n  burnSubtitles: true,\n  effects: [\n    {\n      kind: \"zoom\",\n      params: {\n        startScale: 1.0,\n        endScale: 1.3\n      }\n    }\n  ],\n  overlays: []\n};\n\nconsole.log('MCP Payload создан:', JSON.stringify(mcpPayload, null, 2));\n\nreturn {\n  json: {\n    mcp_payload: mcpPayload,\n    scenario: scenario,\n    tempDir: tempDir,\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "ai-producer",
+      "name": "🎭 AI Продюсер - Подготовка MCP",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1780, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://178.156.142.35:4123/api/create-video",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "={{ JSON.stringify($json.mcp_payload) }}",
+        "options": {}
+      },
+      "id": "mcp-video-creation",
+      "name": "🎬 MCP Монтажер",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2000, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Обрабатываем ответ от MCP сервера\nconst mcpResponse = $input.first().json;\n\nconsole.log('MCP Response:', JSON.stringify(mcpResponse, null, 2));\n\nif (mcpResponse.id) {\n  return {\n    json: {\n      status: 'video_creation_started',\n      job_id: mcpResponse.id,\n      progress: 0,\n      message: `🎬 Видео создается! ID задачи: ${mcpResponse.id}`,\n      status_url: `http://178.156.142.35:4123/api/status/${mcpResponse.id}`,\n      scenario: $('🎭 AI Продюсер - Подготовка MCP').first().json.scenario\n    }\n  };\n} else {\n  return {\n    json: {\n      status: 'error',\n      message: '❌ Ошибка создания видео',\n      error: mcpResponse.error || mcpResponse.message || 'Неизвестная ошибка',\n      full_response: mcpResponse\n    }\n  };\n}"
+      },
+      "id": "process-mcp-response",
+      "name": "📊 Обработка ответа MCP",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2220, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.status_url }}",
+        "options": {}
+      },
+      "id": "check-video-status",
+      "name": "⏱️ Проверка статуса видео",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2440, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "video-completed",
+              "leftValue": "={{ $json.state }}",
+              "rightValue": "done",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-completion",
+      "name": "✅ Видео готово?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2660, 300]
+    },
+    {
+      "parameters": {
+        "amount": 15,
+        "unit": "seconds"
+      },
+      "id": "wait-for-completion",
+      "name": "⏳ Ожидание завершения",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [2440, 500]
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "name": "={{ $('📊 Обработка ответа MCP').first().json.scenario.title || 'N8N Generated Video' }}.mp4",
+        "parents": [
+          "1LQGVzRshQLgKbLFZT-D2arfDEwGkLC-T"
+        ],
+        "options": {
+          "description": "Автоматически созданное видео через N8N workflow с AI агентами"
+        }
+      },
+      "id": "upload-to-gdrive",
+      "name": "📤 AI Публикатор - Загрузка на Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [2880, 200],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "XDM9FIbDJMpu7nGH",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Финальный результат\nconst videoData = $input.first().json;\nconst scenario = $('📊 Обработка ответа MCP').first().json.scenario;\n\nconsole.log('Финальные данные видео:', JSON.stringify(videoData, null, 2));\n\nreturn {\n  json: {\n    status: 'completed',\n    message: '🎉 Видео успешно создано и загружено на Google Drive!',\n    title: scenario.title,\n    video_url: videoData.output || videoData.output_url,\n    gdrive_url: videoData.webViewLink,\n    gdrive_id: videoData.id,\n    duration: scenario.duration,\n    created_at: new Date().toISOString(),\n    workflow_success: true\n  }\n};"
+      },
+      "id": "final-result",
+      "name": "🎉 Финальный результат",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3100, 300]
+    }
+  ],
+  "connections": {
+    "🚀 Запуск": {
+      "main": [
+        [
+          {
+            "node": "📝 Подготовка промпта сценариста",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📝 Подготовка промпта сценариста": {
+      "main": [
+        [
+          {
+            "node": "🎭 AI Сценарист Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎭 AI Сценарист Agent": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "OpenRouter Chat Model",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ],
+      "ai_memory": [
+        [
+          {
+            "node": "Simple Memory",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ],
+      "main": [
+        [
+          {
+            "node": "📋 Парсинг сценария",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📋 Парсинг сценария": {
+      "main": [
+        [
+          {
+            "node": "📁 AI Режиссер - Поиск в Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📁 AI Режиссер - Поиск в Google Drive": {
+      "main": [
+        [
+          {
+            "node": "⬇️ Скачивание найденных фото",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⬇️ Скачивание найденных фото": {
+      "main": [
+        [
+          {
+            "node": "💾 Сохранение и анализ фото",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "💾 Сохранение и анализ фото": {
+      "main": [
+        [
+          {
+            "node": "🎭 AI Продюсер - Подготовка MCP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎭 AI Продюсер - Подготовка MCP": {
+      "main": [
+        [
+          {
+            "node": "🎬 MCP Монтажер",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎬 MCP Монтажер": {
+      "main": [
+        [
+          {
+            "node": "📊 Обработка ответа MCP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📊 Обработка ответа MCP": {
+      "main": [
+        [
+          {
+            "node": "⏱️ Проверка статуса видео",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⏱️ Проверка статуса видео": {
+      "main": [
+        [
+          {
+            "node": "✅ Видео готово?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "✅ Видео готово?": {
+      "main": [
+        [
+          {
+            "node": "📤 AI Публикатор - Загрузка на Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "⏳ Ожидание завершения",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⏳ Ожидание завершения": {
+      "main": [
+        [
+          {
+            "node": "⏱️ Проверка статуса видео",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📤 AI Публикатор - Загрузка на Google Drive": {
+      "main": [
+        [
+          {
+            "node": "🎉 Финальный результат",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {},
+  "versionId": "C9RkDgm7BK2Z7dxt",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}
+

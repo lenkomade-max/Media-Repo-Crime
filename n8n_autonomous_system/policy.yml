@@ -1,0 +1,419 @@
+# 🛡️ Политики безопасности автономной системы N8N
+# Версия: 1.0
+# Дата: 2025-10-02
+
+# =============================================================================
+# ОСНОВНЫЕ ПРИНЦИПЫ БЕЗОПАСНОСТИ
+# =============================================================================
+
+security:
+  # Принцип "Staging First" - все изменения сначала в staging
+  staging_first: true
+  
+  # Максимальное количество попыток исправления на один инцидент
+  max_attempts: 5
+  
+  # Cooldown период между попытками (секунды)
+  cooldown_seconds: 300
+  
+  # Порог уверенности для автоматического применения (0.0-1.0)
+  auto_apply_threshold: 0.8
+  
+  # Порог уверенности для требования ручного подтверждения
+  require_approval_threshold: 0.7
+  
+  # Требовать 2FA для критичных операций
+  require_2fa: true
+  
+  # Цифровая подпись всех изменений
+  digital_signature: true
+
+# =============================================================================
+# ЗАПРЕЩЕННЫЕ ОПЕРАЦИИ
+# =============================================================================
+
+forbidden_operations:
+  # Операции, которые НИКОГДА не выполняются автоматически
+  never_auto:
+    - delete_workflow
+    - delete_credentials
+    - modify_system_settings
+    - drop_database_tables
+    - delete_execution_history
+    - modify_user_permissions
+  
+  # Операции, требующие ручного подтверждения
+  require_approval:
+    - create_new_credentials
+    - modify_existing_credentials
+    - change_workflow_permissions
+    - bulk_operations
+    - system_configuration_changes
+  
+  # Операции, разрешенные только в staging
+  staging_only:
+    - experimental_fixes
+    - beta_features
+    - untested_modifications
+
+# =============================================================================
+# МОНИТОРИНГ И ОБНАРУЖЕНИЕ
+# =============================================================================
+
+monitoring:
+  # Интервал polling мониторинга (секунды)
+  poll_interval_seconds: 10
+  
+  # Timeout для webhook уведомлений
+  webhook_timeout_seconds: 30
+  
+  # Максимальное время ожидания execution
+  execution_timeout_seconds: 600
+  
+  # Интервал health check системы
+  health_check_interval_seconds: 60
+  
+  # Включить real-time мониторинг
+  realtime_monitoring: true
+  
+  # Включить anomaly detection
+  anomaly_detection: true
+
+# =============================================================================
+# СТРАТЕГИИ ИСПРАВЛЕНИЯ
+# =============================================================================
+
+repair_strategies:
+  # Credentials ошибки
+  credentials:
+    confidence_threshold: 0.9
+    max_retry_attempts: 3
+    actions:
+      - refresh_token
+      - validate_permissions
+      - rotate_credentials
+  
+  # Network/Timeout ошибки
+  network:
+    confidence_threshold: 0.8
+    max_retry_attempts: 5
+    actions:
+      - increase_timeout
+      - add_retry_logic
+      - implement_circuit_breaker
+  
+  # External API ошибки
+  external_api:
+    confidence_threshold: 0.7
+    max_retry_attempts: 3
+    actions:
+      - add_exponential_backoff
+      - implement_fallback
+      - cache_responses
+  
+  # Mapping/Validation ошибки
+  mapping:
+    confidence_threshold: 0.9
+    max_retry_attempts: 2
+    actions:
+      - fix_field_paths
+      - add_validation
+      - provide_defaults
+  
+  # Internal function ошибки
+  internal:
+    confidence_threshold: 0.6
+    max_retry_attempts: 2
+    actions:
+      - replace_with_safe_alternative
+      - add_error_handling
+      - simplify_logic
+
+# =============================================================================
+# УВЕДОМЛЕНИЯ И ЭСКАЛАЦИЯ
+# =============================================================================
+
+notifications:
+  # Активные каналы уведомлений
+  channels:
+    telegram:
+      enabled: true
+      bot_token: "${TELEGRAM_BOT_TOKEN}"
+      chat_id: "${TELEGRAM_CHAT_ID}"
+    
+    slack:
+      enabled: true
+      webhook_url: "${SLACK_WEBHOOK_URL}"
+      channel: "#n8n-alerts"
+    
+    email:
+      enabled: true
+      smtp_host: "${EMAIL_SMTP_HOST}"
+      smtp_port: 587
+      from_email: "${EMAIL_FROM}"
+      to_emails: ["${ADMIN_EMAIL}"]
+  
+  # Уровни эскалации
+  escalation_levels:
+    info:
+      notify_channels: ["telegram"]
+      require_ack: false
+    
+    warning:
+      notify_channels: ["telegram", "slack"]
+      require_ack: false
+    
+    critical:
+      notify_channels: ["telegram", "slack", "email"]
+      require_ack: true
+      escalation_timeout: 300  # 5 минут
+    
+    emergency:
+      notify_channels: ["telegram", "slack", "email"]
+      require_ack: true
+      escalation_timeout: 60   # 1 минута
+      require_immediate_response: true
+
+# =============================================================================
+# АУДИТ И ЛОГИРОВАНИЕ
+# =============================================================================
+
+audit:
+  # Включить immutable audit trail
+  immutable_logging: true
+  
+  # Хранить полные diff'ы изменений
+  store_full_diffs: true
+  
+  # Период хранения логов (дни)
+  retention_days: 365
+  
+  # Сжатие старых логов
+  compress_old_logs: true
+  
+  # Экспорт в внешние системы
+  export_to_external: true
+  
+  # Цифровая подпись записей
+  sign_entries: true
+  
+  # Поля для логирования
+  log_fields:
+    - timestamp
+    - user_id
+    - action_type
+    - workflow_id
+    - node_id
+    - before_state
+    - after_state
+    - confidence_score
+    - approval_status
+    - execution_id
+
+# =============================================================================
+# ТЕСТИРОВАНИЕ И ВАЛИДАЦИЯ
+# =============================================================================
+
+testing:
+  # Обязательное тестирование в staging
+  mandatory_staging_test: true
+  
+  # Минимальное время тестирования в staging (секунды)
+  min_staging_duration: 300
+  
+  # Canary deployment процент трафика
+  canary_traffic_percent: 10
+  
+  # Автоматический rollback при ошибках
+  auto_rollback_on_error: true
+  
+  # Максимальное время canary тестирования
+  max_canary_duration: 1800  # 30 минут
+  
+  # Тестовые payload'ы
+  test_payloads:
+    - name: "basic_test"
+      data: {"topic": "Test execution"}
+    - name: "complex_test"
+      data: {"topic": "Complex criminal story", "duration": 60}
+    - name: "edge_case_test"
+      data: {"topic": "", "invalid_field": null}
+
+# =============================================================================
+# ПРОИЗВОДИТЕЛЬНОСТЬ И РЕСУРСЫ
+# =============================================================================
+
+performance:
+  # Максимальное количество параллельных операций
+  max_concurrent_operations: 5
+  
+  # Timeout для операций (секунды)
+  operation_timeout: 300
+  
+  # Максимальное использование CPU (%)
+  max_cpu_usage: 80
+  
+  # Максимальное использование памяти (MB)
+  max_memory_usage: 1024
+  
+  # Интервал сборки мусора
+  gc_interval_seconds: 300
+
+# =============================================================================
+# ИНТЕГРАЦИИ И ВНЕШНИЕ СЕРВИСЫ
+# =============================================================================
+
+integrations:
+  # N8N API конфигурация
+  n8n:
+    api_url: "${N8N_API_URL}"
+    admin_token: "${N8N_ADMIN_TOKEN}"
+    ssh_host: "${SSH_HOST}"
+    max_retries: 3
+    timeout: 30
+  
+  # PostgreSQL конфигурация
+  postgresql:
+    host: "${DB_HOST}"
+    port: 5432
+    database: "${DB_NAME}"
+    username: "${DB_USER}"
+    password: "${DB_PASSWORD}"
+    max_connections: 10
+  
+  # MCP Server конфигурация
+  mcp_server:
+    url: "http://178.156.142.35:4123"
+    timeout: 300
+    max_retries: 3
+  
+  # Vault для секретов
+  vault:
+    enabled: false
+    url: "${VAULT_URL}"
+    token: "${VAULT_TOKEN}"
+
+# =============================================================================
+# МЕТРИКИ И KPI
+# =============================================================================
+
+metrics:
+  # Целевые показатели
+  targets:
+    mttr_seconds: 300        # Mean Time To Repair
+    success_rate: 0.95       # 95% успешных исправлений
+    availability: 0.999      # 99.9% uptime
+    max_error_rate: 0.01     # Максимум 1% ошибок
+  
+  # Интервал сбора метрик
+  collection_interval: 60
+  
+  # Экспорт метрик
+  export_prometheus: true
+  export_grafana: true
+  
+  # Алерты по метрикам
+  alerts:
+    mttr_exceeded:
+      threshold: 600  # 10 минут
+      severity: "warning"
+    
+    success_rate_low:
+      threshold: 0.90
+      severity: "critical"
+    
+    system_unavailable:
+      threshold: 0.95
+      severity: "emergency"
+
+# =============================================================================
+# РЕЖИМЫ РАБОТЫ
+# =============================================================================
+
+modes:
+  # Режим по умолчанию
+  default_mode: "production"
+  
+  # Доступные режимы
+  available_modes:
+    development:
+      auto_apply_threshold: 0.5
+      require_approval_threshold: 0.3
+      max_attempts: 10
+      cooldown_seconds: 60
+    
+    staging:
+      auto_apply_threshold: 0.7
+      require_approval_threshold: 0.5
+      max_attempts: 7
+      cooldown_seconds: 120
+    
+    production:
+      auto_apply_threshold: 0.8
+      require_approval_threshold: 0.7
+      max_attempts: 5
+      cooldown_seconds: 300
+    
+    emergency:
+      auto_apply_threshold: 0.9
+      require_approval_threshold: 0.8
+      max_attempts: 3
+      cooldown_seconds: 600
+
+# =============================================================================
+# COMPLIANCE И СООТВЕТСТВИЕ
+# =============================================================================
+
+compliance:
+  # Стандарты соответствия
+  standards:
+    - "ISO 27001"
+    - "SOC 2"
+    - "GDPR"
+  
+  # Обязательные поля аудита
+  mandatory_audit_fields:
+    - user_identification
+    - action_timestamp
+    - resource_affected
+    - change_justification
+    - approval_chain
+  
+  # Период хранения для compliance
+  compliance_retention_years: 7
+  
+  # Шифрование sensitive данных
+  encrypt_sensitive_data: true
+  
+  # Регулярные compliance проверки
+  compliance_checks:
+    frequency: "monthly"
+    automated: true
+    report_generation: true
+
+# =============================================================================
+# ВЕРСИОНИРОВАНИЕ И ОБНОВЛЕНИЯ
+# =============================================================================
+
+versioning:
+  # Версия конфигурации
+  config_version: "1.0"
+  
+  # Автоматические обновления
+  auto_updates: false
+  
+  # Проверка обновлений
+  check_updates: true
+  update_check_interval: "daily"
+  
+  # Backup перед обновлениями
+  backup_before_update: true
+  
+  # Rollback capability
+  enable_rollback: true
+  max_rollback_versions: 10
+
+---
+# Конец файла политик безопасности
+# Все изменения в этом файле должны проходить review и approval
+# Версия должна увеличиваться при каждом изменении

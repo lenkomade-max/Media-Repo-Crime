@@ -12,6 +12,7 @@ import { buildAudioFilter } from "../audio/AudioMixer.js";
 import { buildVideoOverlayFilter } from "./OverlayRenderer.js";
 import { log } from "../logger.js";
 import { FileDownloader } from "../utils/FileDownloader.js";
+import { createCrimeVideo, validateCrimeMaterials, CRIME_DEFAULTS } from "../config/CrimeDefaults.js";
 
 const uuidv4 = uuid.v4;
 
@@ -32,6 +33,50 @@ export default class MediaCreator {
 
   enqueueJob(input: PlanInput) { return this.enqueue(input); }
   getStatus(id: string) { return this.statuses.get(id) || this.completed.get(id); }
+  
+  /**
+   * Создает идеальное криминальное видео по умолчанию
+   * @param script - текст сценария для озвучки
+   * @param hookText - текст верхнего оверлея (hook)
+   * @param baitText - текст нижнего оверлея (bait)
+   * @param images - количество изображений (по умолчанию 30)
+   * @param duration - общая длительность в секундах
+   */
+  async createCrimeVideo(
+    script: string,
+    hookText?: string,
+    baitText?: string,
+    images?: number,
+    duration?: number
+  ): Promise<string> {
+    log.info("🎬 Создание идеального криминального видео...");
+    
+    // Валидируем Crime Materials
+    const materialsOk = await validateCrimeMaterials();
+    if (!materialsOk) {
+      throw new Error("❌ Crime Materials не найдены на сервере!");
+    }
+    
+    // Создаем план с правильными настройками
+    const crimePlan = createCrimeVideo(
+      images || 30,
+      duration || 60,
+      script,
+      hookText,
+      baitText
+    );
+    
+    log.info(`📋 План создан: ${images || 30} изображений, ${duration || 60} секунд`);
+    log.info(`🎵 Музыка: ${CRIME_DEFAULTS.paths.musicPath}`);
+    log.info(`🎭 Озвучка: ${script.length} символов`);
+    log.info(`📺 Эффекты: VHS + Arrow + Zoom`);
+    
+    // Добавляем задачу в очередь
+    const jobId = this.enqueue(crimePlan);
+    
+    log.info(`✅ Задача создана с ID: ${jobId}`);
+    return jobId;
+  }
   
   // Новые методы для API
   getAllJobs(limit = 20, offset = 0) {
@@ -136,7 +181,7 @@ export default class MediaCreator {
   }
 
   private async process(id: string, input: PlanInput): Promise<{ output: string; srt?: string; vtt?: string }> {
-    const workRoot = path.join(process.cwd(), "output");
+    const workRoot = process.env.OUTPUT_DIR || "/app/output";
     const workDir = path.join(workRoot, `job_${id}`);
     await fse.ensureDir(workDir);
 

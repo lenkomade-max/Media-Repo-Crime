@@ -1,0 +1,83 @@
+_execute_workflow(workflow_id)
+                
+                # Мониторинг выполнения
+                analysis = self.execution_monitor.monitor_execution(
+                    execution_result['executionId']
+                )
+                
+                iteration_results.append(analysis)
+                
+                # Проверка на успех
+                if analysis['status'] == 'success' and not analysis['errors']:
+                    success = True
+                    console.print("[bold green]✨ Workflow executed successfully![/]")
+                    break
+                
+                # Анализ ошибок
+                if analysis['errors']:
+                    console.print("[bold red]❌ Errors detected:[/]")
+                    for error in analysis['errors']:
+                        console.print(f"  • {error['node']}: {error['error'].get('message', 'Unknown')}")
+                    
+                    # Автоматическое исправление
+                    if not self._auto_fix_workflow(workflow_id, analysis):
+                        console.print("[bold red]Failed to apply fixes. Manual intervention required.[/]")
+                        break
+                else:
+                    console.print("[yellow]⚠️  Workflow finished but status is not success[/]")
+                    break
+        
+        # Финальный отчет
+        return self._generate_final_report(workflow_id, success, iteration_results)
+    
+    def _create_initial_workflow(self, spec: Dict) -> Dict:
+        """Создать начальный workflow из спецификации"""
+        builder = WorkflowBuilder()
+        
+        # Простой пример: HTTP запрос
+        # В реальности здесь будет AI генерация на основе spec
+        
+        builder.add_node(
+            node_type="n8n-nodes-base.manualTrigger",
+            name="Manual Trigger",
+            parameters={},
+            position=[100, 100]
+        )
+        
+        builder.add_node(
+            node_type="n8n-nodes-base.httpRequest",
+            name="HTTP Request",
+            parameters={
+                "method": "GET",
+                "url": spec.get('url', 'https://api.example.com/data')
+            },
+            position=[300, 100]
+        )
+        
+        builder.connect_nodes("Manual Trigger", "HTTP Request")
+        
+        workflow_data = builder.build(
+            name=spec.get('name', 'AI Generated Workflow'),
+            description=spec.get('description', '')
+        )
+        
+        return self.n8n_client.create_workflow(workflow_data)
+    
+    def _execute_workflow(self, workflow_id: str) -> Dict:
+        """Выполнить workflow"""
+        console.print("  🏃 Executing workflow...")
+        result = self.n8n_client.execute_workflow(workflow_id)
+        console.print(f"  📊 Execution ID: {result.get('executionId')}")
+        return result
+    
+    def _auto_fix_workflow(self, workflow_id: str, analysis: Dict) -> bool:
+        """Автоматически исправить workflow"""
+        console.print("\n[bold cyan]🔧 Attempting automatic fixes...[/]")
+        
+        fixed = False
+        
+        for error in analysis['errors']:
+            # Анализируем каждую ошибку
+            error_analysis = self.error_analyzer.analyze_error(error['error'])
+            
+            console.print(f"  📝 Error t

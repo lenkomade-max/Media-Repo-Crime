@@ -1,0 +1,102 @@
+{
+  "name": "🧪 Тест MCP интеграции",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Создаем простой тестовый JSON для MCP\nconst testPayload = {\n  \"files\": [\n    {\n      \"id\": \"test_image\",\n      \"src\": \"/root/test_image.jpg\",\n      \"type\": \"photo\",\n      \"durationSec\": 5\n    }\n  ],\n  \"width\": 1080,\n  \"height\": 1920,\n  \"fps\": 30,\n  \"durationPerPhoto\": 5,\n  \"outputFormat\": \"mp4\",\n  \"musicVolumeDb\": -8,\n  \"overlays\": [],\n  \"tts\": {\n    \"provider\": \"kokoro\",\n    \"voice\": \"default\"\n  },\n  \"ttsText\": \"Это тестовое видео для проверки интеграции N8N с MCP сервером.\",\n  \"subtitles\": [\n    {\n      \"start\": 0,\n      \"end\": 5,\n      \"text\": \"Тестовое видео\"\n    }\n  ]\n};\n\nreturn {\n  json: {\n    mcp_payload: testPayload,\n    test_mode: true,\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "create-test-payload",
+      "name": "📦 Создание тестового payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://178.156.142.35:4123/api/create-video",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "={{ JSON.stringify($json.mcp_payload) }}",
+        "options": {}
+      },
+      "id": "test-mcp-call",
+      "name": "🎬 Тест MCP API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Обрабатываем ответ от MCP\nconst response = $input.first().json;\n\nif (response.id) {\n  return {\n    json: {\n      status: 'success',\n      message: '✅ MCP интеграция работает!',\n      job_id: response.id,\n      status_url: `http://178.156.142.35:4123/api/status/${response.id}`,\n      next_step: 'Проверьте статус задачи через 30 секунд'\n    }\n  };\n} else {\n  return {\n    json: {\n      status: 'error',\n      message: '❌ Ошибка MCP интеграции',\n      error: response.error || 'Неизвестная ошибка',\n      response: response\n    }\n  };\n}"
+      },
+      "id": "process-response",
+      "name": "📊 Обработка ответа",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "📦 Создание тестового payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📦 Создание тестового payload": {
+      "main": [
+        [
+          {
+            "node": "🎬 Тест MCP API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎬 Тест MCP API": {
+      "main": [
+        [
+          {
+            "node": "📊 Обработка ответа",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["test", "mcp"],
+  "triggerCount": 1,
+  "updatedAt": "2025-10-02T10:40:00.000Z",
+  "versionId": "1"
+}
+
+

@@ -1,0 +1,102 @@
+{
+  "files": [
+    {
+      "id": "scene_1",
+      "src": "/tmp/final_video/scene_1.jpg",
+      "type": "photo",
+      "durationSec": 10
+    },
+    {
+      "id": "scene_2",
+      "src": "/tmp/final_video/scene_2.jpg",
+      "type": "photo",
+      "durationSec": 10
+    },
+    {
+      "id": "scene_3",
+      "src": "/tmp/final_video/scene_3.jpg",
+      "type": "photo",
+      "durationSec": 10
+    },
+    {
+      "id": "scene_4",
+      "src": "/tmp/final_video/scene_4.jpg",
+      "type": "photo",
+      "durationSec": 10
+    },
+    {
+      "id": "scene_5",
+      "src": "/tmp/final_video/scene_5.jpg",
+      "type": "photo",
+      "durationSec": 10
+    },
+    {
+      "id": "scene_6",
+      "src": "/tmp/final_video/scene_6.jpg",
+      "type": "photo",
+      "durationSec": 10
+    }
+  ],
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "outputFormat": "mp4",
+  "musicVolumeDb": -12,
+  "ducking": {
+    "enabled": true,
+    "musicDuckDb": 8,
+    "threshold": 0.05,
+    "ratio": 8,
+    "attack": 5,
+    "release": 250
+  },
+  "tts": {
+    "provider": "kokoro",
+    "voice": "default"
+  },
+  "ttsText": "ФИНАЛЬНЫЙ ТЕСТ N8N WORKFLOW. В темных переулках Чикаго произошла серия жестоких убийств. Детектив Сара Мартинес начала расследование этого загадочного дела. Каждая жертва имела одинаковый древний символ вырезанный на коже. Все жертвы в прошлом расследовали одну и ту же фармацевтическую компанию которая проводила незаконные эксперименты на бездомных людях. Убийца имел доступ к внутренней информации полиции. Оказалось что её собственный напарник детектив Джонсон все это время передавал информацию убийце. В драматической конфронтации в том же складе где все началось детектив Мартинес должна была выбрать между лояльностью к напарнику и долгом справедливости. Правда оказалась более ужасающей чем кто-либо мог себе представить.",
+  "subtitles": [
+    {
+      "start": 0,
+      "end": 10,
+      "text": "ФИНАЛЬНЫЙ ТЕСТ N8N WORKFLOW"
+    },
+    {
+      "start": 10,
+      "end": 20,
+      "text": "В Чикаго произошла серия убийств"
+    },
+    {
+      "start": 20,
+      "end": 30,
+      "text": "Детектив Мартинес начала расследование"
+    },
+    {
+      "start": 30,
+      "end": 40,
+      "text": "Каждая жертва имела древний символ"
+    },
+    {
+      "start": 40,
+      "end": 50,
+      "text": "Фармацевтическая компания и эксперименты"
+    },
+    {
+      "start": 50,
+      "end": 60,
+      "text": "Напарник оказался предателем"
+    }
+  ],
+  "burnSubtitles": true,
+  "transcribeAudio": false,
+  "effects": [
+    {
+      "kind": "zoom",
+      "params": {
+        "startScale": 1.0,
+        "endScale": 1.5
+      }
+    }
+  ],
+  "overlays": []
+}

@@ -1,0 +1,30 @@
+{
+  "timestamp": "2025-10-02T17:06:00.132648",
+  "n8n_status": true,
+  "workflow_info": {
+    "id": "ZqAhNOrEJQv1JfXL",
+    "active": true,
+    "nodes": "[{\"parameters\":{},\"id\":\"manual-trigger\",\"name\":\"🚀 Запуск\",\"type\":\"n8n-nodes-base.manualTrigger\",\"typeVersion\":1,\"position\":[240,300]},{\"parameters\":{\"options\":{}},\"type\":\"@n8n/n8n-nodes-langchain.agent\",\"typeVersion\":2.2,\"position\":[460,300],\"id\":\"ai-screenwriter-agent\",\"name\":\"🎭 AI Сценарист Agent\"},{\"parameters\":{\"model\":{\"__rl\":true,\"mode\":\"list\",\"value\":\"anthropic/claude-3.5-sonnet\",\"cachedResultName\":\"Claude 3.5 Sonnet\"},\"options\":{}},\"type\":\"@n8n/n8n-nodes-langchain.lmChatOpenRouter\",\"typeVersion\":1,\"position\":[460,480],\"id\":\"openrouter-chat-model\",\"name\":\"OpenRouter Chat Model\",\"credentials\":{\"openRouterApi\":{\"id\":\"dctACn3yXSG7qIdH\",\"name\":\"OpenRouter account\"}}},{\"parameters\":{\"sessionIdExpression\":\"={{ $workflow.executionId }}\"},\"type\":\"@n8n/n8n-nodes-langchain.memoryBufferWindow\",\"typeVersion\":1.3,\"position\":[680,480],\"id\":\"simple-memory\",\"name\":\"Simple Memory\"},{\"parameters\":{\"jsCode\":\"// Создаем промпт для AI Сценариста\\nconst topic = $input.first().json.topic",
+    "connections": ""
+  },
+  "credentials": [
+    {
+      "id": "XDM9FIbDJMpu7nGH",
+      "name": "Google Drive account",
+      "type": "googleDriveOAuth2Api"
+    },
+    {
+      "id": "fkmedLZBgiBoy0fe",
+      "name": "Google Gemini(PaLM) Api account",
+      "type": "googlePalmApi"
+    },
+    {
+      "id": "d1ugTlR9BOuStnGN",
+      "name": "OpenAi account",
+      "type": "openAiApi"
+    }
+  ],
+  "recent_executions": [],
+  "mcp_server": true,
+  "workflow_analysis": null
+}

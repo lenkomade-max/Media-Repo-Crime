@@ -1,0 +1,82 @@
+{
+  "files": [
+    {
+      "id": "scene_1",
+      "src": "/tmp/n8n_test/scene_1.jpg",
+      "type": "photo",
+      "durationSec": 8
+    },
+    {
+      "id": "scene_2",
+      "src": "/tmp/n8n_test/scene_2.jpg",
+      "type": "photo",
+      "durationSec": 8
+    },
+    {
+      "id": "scene_3",
+      "src": "/tmp/n8n_test/scene_3.jpg",
+      "type": "photo",
+      "durationSec": 8
+    },
+    {
+      "id": "scene_4",
+      "src": "/tmp/n8n_test/scene_4.jpg",
+      "type": "photo",
+      "durationSec": 8
+    },
+    {
+      "id": "scene_5",
+      "src": "/tmp/n8n_test/scene_5.jpg",
+      "type": "photo",
+      "durationSec": 8
+    }
+  ],
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "durationPerPhoto": 8,
+  "outputFormat": "mp4",
+  "tts": {
+    "provider": "kokoro",
+    "voice": "default"
+  },
+  "ttsText": "A mysterious murder case shocked Chicago. Detective Sarah Martinez received a call that would change everything. \n    The victim was found in an abandoned warehouse, but this wasn't ordinary. The evidence pointed to something darker - \n    a serial killer operating in shadows for months. Each victim had the same mysterious symbol carved into their skin, \n    connecting them to an ancient cult. Detective Martinez discovered all victims were investigating the same pharmaceutical \n    company conducting illegal experiments on homeless people. The killer had inside knowledge, knowing which investigators \n    were getting too close to the truth. The final twist came when Martinez realized her own partner Detective Johnson \n    was feeding information to the killer all along. In a dramatic confrontation in the same warehouse where it all began, \n    Martinez had to choose between loyalty to her partner and her duty to justice. The truth was more terrifying than \n    anyone could have imagined - the pharmaceutical company was creating super soldiers using homeless people as test subjects.",
+  "subtitles": [
+    {
+      "start": 0,
+      "end": 8,
+      "text": "A mysterious murder case shocked Chicago"
+    },
+    {
+      "start": 8,
+      "end": 16,
+      "text": "Detective Martinez received the call"
+    },
+    {
+      "start": 16,
+      "end": 24,
+      "text": "Evidence pointed to a serial killer"
+    },
+    {
+      "start": 24,
+      "end": 32,
+      "text": "Each victim had the same symbol"
+    },
+    {
+      "start": 32,
+      "end": 40,
+      "text": "The truth was more terrifying than imagined"
+    }
+  ],
+  "burnSubtitles": true,
+  "effects": [
+    {
+      "kind": "zoom",
+      "params": {
+        "startScale": 1.0,
+        "endScale": 1.3
+      }
+    }
+  ],
+  "overlays": []
+}

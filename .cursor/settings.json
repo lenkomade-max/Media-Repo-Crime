@@ -1,3 +1,5 @@
 {
-  "cursor.ai.model": "claude-sonnet-4"
+  "cursor.ai.model": "claude-4-opus",
+  "cursor.ai.fallbackModel": "claude-4-sonnet",
+  "cursor.ai.autoSelect": false
 }
