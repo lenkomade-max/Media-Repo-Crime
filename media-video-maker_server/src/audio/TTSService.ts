@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import { PlanInput, TTSOptions } from "../types/plan.js";
+import { log } from "../logger.js";
 
 /**
  * Возвращает путь к аудио озвучки:

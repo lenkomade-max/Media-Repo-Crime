@@ -1,22 +1,23 @@
 # docker-compose для двух сервисов: media-video-maker и mcp-server
 version: '3.8'
 services:
-	media-video-maker:
-		build: .
-		command: node dist/index.js
-		ports:
-			- "4123:4123"
-		volumes:
-			- .:/app
-		environment:
-			- NODE_ENV=production
+  media-video-maker:
+    build: .
+    command: node dist/index.js
+    ports:
+      - "4123:4123"
+    volumes:
+      - .:/app
+      - ./output:/app/output
+    environment:
+      - NODE_ENV=production
 
-	mcp-server:
-		build: .
-		command: node dist/server/mcp-server.js
-		ports:
-			- "5123:5123"
-		volumes:
-			- .:/app
-		environment:
-			- NODE_ENV=production
+  mcp-server:
+    build: .
+    command: node dist/server/mcp-server.js
+    ports:
+      - "5123:5123"
+    volumes:
+      - .:/app
+    environment:
+      - NODE_ENV=production

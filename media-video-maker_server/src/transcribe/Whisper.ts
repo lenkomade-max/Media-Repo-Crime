@@ -1,5 +1,6 @@
 import path from "path";
 import { execa } from "execa";
+import { log } from "../logger.js";
 
 /**
  * Запускает whisper CLI для распознавания аудио в .srt

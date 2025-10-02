@@ -2,12 +2,27 @@ import { execa } from "execa";
 import { log } from "../logger.js";
 
 export async function runFFmpeg(args: string[], cwd?: string) {
-  log.debug("ffmpeg", args.join(" "));
+  const cmd = ["-y", ...args];
+  log.debug("ffmpeg", cmd.join(" "));
   try {
-    const { stdout, stderr } = await execa("ffmpeg", ["-y", ...args], { cwd });
+    const { stdout, stderr } = await execa("ffmpeg", cmd, { cwd });
+    
+    // Логируем stderr для диагностики
+    if (stderr) {
+      log.info(`FFmpeg stderr: ${stderr}`);
+    }
+    if (stdout) {
+      log.info(`FFmpeg stdout: ${stdout}`);
+    }
+    
     return { stdout, stderr };
-  } catch (error) {
-    log.error("FFmpeg error:", error);
+  } catch (error: any) {
+    log.error("FFmpeg error:", {
+      message: error.message,
+      stderr: error.stderr,
+      stdout: error.stdout,
+      cmd: cmd.join(" ")
+    });
     throw error;
   }
 }

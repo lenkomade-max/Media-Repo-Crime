@@ -147,20 +147,20 @@ export async function buildVideoOverlayFilter(
       const wordsPerSec = animation.wordsPerSecond || 3;
       const totalWords = displayText.split(' ').length;
       const typewriterDuration = Math.min(duration * 0.7, totalWords / wordsPerSec);
-      animExpr = `:alpha='if(lt(t,${start + typewriterDuration}),min(1,(t-${start})/${typewriterDuration}),1)'`;
+      animExpr = `:alpha=if(lt(t,${start + typewriterDuration}),min(1,(t-${start})/${typewriterDuration}),1)`;
     } else if (duration > 2) {
       const fadeInTime = Math.min(0.6, Math.max(0.2, duration * 0.12));
       const fadeOutTime = Math.min(0.6, Math.max(0.2, duration * 0.12));
       const fadeInEnd = start + fadeInTime;
       const fadeOutStart = end - fadeOutTime;
-      animExpr = `:alpha='if(lt(t,${fadeInEnd}),(t-${start})/${fadeInTime},if(gt(t,${fadeOutStart}),(${end}-t)/${fadeOutTime},1))'`;
+      animExpr = `:alpha=if(lt(t,${fadeInEnd}),(t-${start})/${fadeInTime},if(gt(t,${fadeOutStart}),(${end}-t)/${fadeOutTime},1))`;
     }
 
     // Улучшенное форматирование с padding
     const expr =
       `drawtext=fontfile='${fontFile}':textfile='${textFile}':fontsize=${size}:fontcolor=${fontcolor}:` +
       `box=1:boxcolor=${bg}:boxborderw=${Math.max(2, borderRadius/4)}:borderw=${outline}:` +
-      `x=${x}:y=${y}${animExpr}:enable='between(t,${start},${end})'`;
+      `x=${x}:y=${y}${animExpr}:enable=between(t,${start},${end})`;
     
     chains.push(`${current}${expr}${out}`);
     current = out;
