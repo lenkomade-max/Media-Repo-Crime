@@ -1,0 +1,29 @@
+{
+  "files": [
+    {
+      "id": "test1",
+      "src": "/root/video_factory/prepared/crime1.jpg",
+      "type": "photo",
+      "durationSec": 3.0
+    },
+    {
+      "id": "test2", 
+      "src": "/root/video_factory/prepared/crime2.jpg",
+      "type": "photo",
+      "durationSec": 3.0
+    },
+    {
+      "id": "test3",
+      "src": "/root/video_factory/prepared/crime3.jpg",
+      "type": "photo",
+      "durationSec": 4.0
+    }
+  ],
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "durationPerPhoto": 3.0,
+  "outputFormat": "mp4",
+  "music": "/root/video_factory/prepared/crime_music.mp3",
+  "musicVolumeDb": -8
+}

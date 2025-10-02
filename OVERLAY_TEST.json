@@ -1,0 +1,60 @@
+{
+  "files": [
+    {
+      "id": "test1",
+      "src": "/root/video_factory/prepared/crime1.jpg",
+      "type": "photo",
+      "durationSec": 3.0
+    },
+    {
+      "id": "test2", 
+      "src": "/root/video_factory/prepared/crime2.jpg",
+      "type": "photo",
+      "durationSec": 3.0
+    },
+    {
+      "id": "test3",
+      "src": "/root/video_factory/prepared/crime3.jpg",
+      "type": "photo",
+      "durationSec": 4.0
+    }
+  ],
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "durationPerPhoto": 3.0,
+  "outputFormat": "mp4",
+  "overlays": [
+    {
+      "target": "top",
+      "text": "ШОКИРУЮЩАЯ ПРАВДА",
+      "startSec": 0,
+      "endSec": 10,
+      "style": {
+        "size": 48,
+        "color": "#FF0000",
+        "fontWeight": "bold",
+        "backgroundStyle": {
+          "color": "rgba(0,0,0,0.8)",
+          "borderRadius": 10,
+          "padding": 15
+        }
+      }
+    },
+    {
+      "target": "bottom",
+      "text": "ЭКСКЛЮЗИВНАЯ ИНФОРМАЦИЯ",
+      "startSec": 2,
+      "endSec": 8,
+      "style": {
+        "size": 32,
+        "color": "#FFFFFF",
+        "backgroundStyle": {
+          "color": "rgba(0,0,0,0.6)",
+          "borderRadius": 8,
+          "padding": 10
+        }
+      }
+    }
+  ]
+}

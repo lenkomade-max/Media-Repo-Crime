@@ -1,0 +1,310 @@
+{
+  "files": [
+    {
+      "id": "crime_1",
+      "src": "/root/video_factory/prepared/crime1.jpg",
+      "type": "photo",
+      "durationSec": 1.5
+    },
+    {
+      "id": "crime_2", 
+      "src": "/root/video_factory/prepared/crime2.jpg",
+      "type": "photo",
+      "durationSec": 1.5
+    },
+    {
+      "id": "crime_3",
+      "src": "/root/video_factory/prepared/crime3.jpg",
+      "type": "photo",
+      "durationSec": 2.0
+    },
+    {
+      "id": "crime_4",
+      "src": "/root/video_factory/prepared/crime4.jpg",
+      "type": "photo",
+      "durationSec": 2.0
+    },
+    {
+      "id": "crime_5",
+      "src": "/root/video_factory/prepared/crime5.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_6",
+      "src": "/root/video_factory/prepared/crime6.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_7",
+      "src": "/root/video_factory/prepared/crime7.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_8",
+      "src": "/root/video_factory/prepared/crime8.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_9",
+      "src": "/root/video_factory/prepared/crime9.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_10",
+      "src": "/root/video_factory/prepared/crime10.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_11",
+      "src": "/root/video_factory/prepared/crime1.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_12",
+      "src": "/root/video_factory/prepared/crime2.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_13",
+      "src": "/root/video_factory/prepared/crime3.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_14",
+      "src": "/root/video_factory/prepared/crime4.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_15",
+      "src": "/root/video_factory/prepared/crime5.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_16",
+      "src": "/root/video_factory/prepared/crime6.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_17",
+      "src": "/root/video_factory/prepared/crime7.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_18",
+      "src": "/root/video_factory/prepared/crime8.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_19",
+      "src": "/root/video_factory/prepared/crime9.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_20",
+      "src": "/root/video_factory/prepared/crime10.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_21",
+      "src": "/root/video_factory/prepared/crime1.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_22",
+      "src": "/root/video_factory/prepared/crime2.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_23",
+      "src": "/root/video_factory/prepared/crime3.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_24",
+      "src": "/root/video_factory/prepared/crime4.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_25",
+      "src": "/root/video_factory/prepared/crime5.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_26",
+      "src": "/root/video_factory/prepared/crime6.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_27",
+      "src": "/root/video_factory/prepared/crime7.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_28",
+      "src": "/root/video_factory/prepared/crime8.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_29",
+      "src": "/root/video_factory/prepared/crime9.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    },
+    {
+      "id": "crime_30",
+      "src": "/root/video_factory/prepared/crime10.jpg",
+      "type": "photo",
+      "durationSec": 2.5
+    }
+  ],
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "durationPerPhoto": 2.5,
+  "outputFormat": "mp4",
+  
+  "music": "/root/video_factory/prepared/crime_music.mp3",
+  "musicVolumeDb": -12,
+  
+  "ducking": {
+    "enabled": true,
+    "threshold": 0.05,
+    "ratio": 8,
+    "attack": 5,
+    "release": 250,
+    "musicDuckDb": 8
+  },
+  
+  "tts": {
+    "provider": "kokoro",
+    "voice": "ru_female",
+    "format": "wav"
+  },
+  "ttsText": "Эксклюзивная информация из криминального мира. Шокирующие детали расследования, которые потрясут общество. Разоблачение преступной группировки продолжатся. Свидетели дают показания. Полиция накрывает сеть. Все факты в этом материале.",
+  
+  "transcribeAudio": true,
+  "burnSubtitles": true,
+  "subtitleStyle": {
+    "size": 24,
+    "color": "white",
+    "background": "black"
+  },
+  
+  "timeline": {
+    "base": [
+      {
+        "type": "video",
+        "file": "[автосгенерированный слайдшоу]"
+      }
+    ],
+    "overlays": [
+      {
+        "type": "effect",
+        "file": "/root/media-video-maker_project/assets/VHS 01 Effect.mp4",
+        "blendMode": "overlay",
+        "start": 0,
+        "end": 75,
+        "opacity": 0.1,
+        "scale": 1.0
+      },
+      {
+        "type": "effect", 
+        "file": "/root/media-video-maker_project/assets/VHS 02 Effect.mp4",
+        "blendMode": "overlay",
+        "start": 30,
+        "end": 75,
+        "opacity": 0.2,
+        "scale": 1.0
+      },
+      {
+        "type": "effect",
+        "file": "/root/media-video-maker_project/assets/Arrow Effect.mp4",
+        "blendMode": "overlay",
+        "start": 15,
+        "end": 20,
+        "opacity": 0.8,
+        "scale": 1.0
+      },
+      {
+        "type": "effect",
+        "file": "/root/media-video-maker_project/assets/Arrow Effect.mp4",
+        "blendMode": "overlay", 
+        "start": 35,
+        "end": 40,
+        "opacity": 0.8,
+        "scale": 1.0
+      },
+      {
+        "type": "effect",
+        "file": "/root/media-video-maker_project/assets/Arrow Effect.mp4",
+        "blendMode": "overlay",
+        "start": 55,
+        "end": 60,
+        "opacity": 0.8,
+        "scale": 1.0
+      }
+    ]
+  },
+  
+  "overlays": [
+    {
+      "target": "top",
+      "text": "ШОКИРУЮЩАЯ ПРАВДА",
+      "startSec": 0,
+      "endSec": 75,
+      "style": {
+        "size": 48,
+        "color": "#FF0000",
+        "fontWeight": "bold"
+      }
+    },
+    {
+      "target": "bottom",
+      "text": "ЭКСКЛЮЗИВНАЯ ИНФОРМАЦИЯ",
+      "startSec": 0,
+      "endSec": 75,
+      "style": {
+        "size": 32,
+        "color": "#FFFFFF"
+      }
+    }
+  ],
+  
+  "effects": [
+    {
+      "kind": "zoom",
+      "startSec": 0,
+      "endSec": 75,
+      "params": {
+        "startScale": 1.0,
+        "endScale": 1.2,
+        "cx": 0.5,
+        "cy": 0.5
+      }
+    }
+  ]
+}

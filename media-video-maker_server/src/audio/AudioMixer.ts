@@ -35,10 +35,10 @@ export function buildAudioFilter({
       const attack = ducking.attack ?? 5;
       const release = ducking.release ?? 250;
       const makeup = ducking.musicDuckDb ?? 8;
-      chains.push(`[music0]${voiceInLabel}sidechaincompress=threshold=${th}:ratio=${ratio}:attack=${attack}:release=${release}:makeup=${makeup}[amix]`);
+      chains.push(`${musicInLabel}${mVol}[music0];${voiceInLabel}[voice0];[music0][voice0]sidechaincompress=threshold=${th}:ratio=${ratio}:attack=${attack}:release=${release}:makeup=${makeup}[amix]`);
       return { chain: chains.join(";"), finalLabel: "[amix]" };
     } else {
-      chains.push(`[music0]${voiceInLabel}amix=inputs=2:normalize=0[amix]`);
+      chains.push(`[music0][voice0]amix=inputs=2:normalize=0[amix]`);
       return { chain: chains.join(";"), finalLabel: "[amix]" };
     }
   }
@@ -50,7 +50,8 @@ export function buildAudioFilter({
 
   if (!hasMusic && hasVoice) {
     // Маппим напрямую вход голоса (без фильтра_complex)
-    return { chain: "", finalLabel: voiceInLabel.replace(/]$/,"") + "]" };
+    console.log(`Voice only mode: voiceInLabel="${voiceInLabel}"`);
+    return { chain: "", finalLabel: voiceInLabel };
   }
 
   return { chain: "", finalLabel: null };

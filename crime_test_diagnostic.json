@@ -1,0 +1,110 @@
+{
+  "files": [
+    {
+      "id": "crime_1",
+      "src": "/root/video_factory/prepared/crime1.jpg",
+      "type": "photo",
+      "durationSec": 3
+    },
+    {
+      "id": "crime_2", 
+      "src": "/root/video_factory/prepared/crime2.jpg",
+      "type": "photo",
+      "durationSec": 3
+    },
+    {
+      "id": "crime_3",
+      "src": "/root/video_factory/prepared/crime3.jpg", 
+      "type": "photo",
+      "durationSec": 3
+    }
+  ],
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "outputFormat": "mp4",
+  "durationPerPhoto": 2.0,
+  "music": "/root/video_factory/prepared/background_music.mp3",
+  "tts": {
+    "provider": "kokoro",
+    "voice": "en_male_2",
+    "format": "mp3",
+    "speed": 1.0,
+    "text": "Это тестовый сценарий для диагностики проблем с озвучкой и субтитрами в Media Video Maker."
+  },
+  "transcribeAudio": true,
+  "burnSubtitles": true,
+  "subtitleStyle": {
+    "fontSize": 32,
+    "fontColor": "white",
+    "backgroundColor": "black",
+    "position": "bottom"
+  },
+  "overlays": [
+    {
+      "type": "text",
+      "target": "top",
+      "text": "CRIME TEST HOOK",
+      "start": 0,
+      "end": 9,
+      "position": {
+        "x": 540,
+        "y": 100,
+        "anchor": "top"
+      },
+      "style": {
+        "fontSize": 48,
+        "color": "yellow",
+        "fontWeight": "bold"
+      }
+    },
+    {
+      "type": "text", 
+      "target": "bottom",
+      "text": "Click Bait Bottom",
+      "start": 2,
+      "end": 8,
+      "position": {
+        "x": 540,
+        "y": 1820,
+        "anchor": "bottom"
+      },
+      "style": {
+        "fontSize": 32,
+        "color": "white",
+        "fontWeight": "bold"
+      }
+    }
+  ],
+  "effects": [
+    {
+      "kind": "zoom",
+      "params": {
+        "startScale": 1.0,
+        "endScale": 1.2,
+        "cx": 0.5,
+        "cy": 0.5
+      }
+    }
+  ],
+  "videoOverlays": [
+    {
+      "type": "effect",
+      "file": "/root/media-video-maker_project/assets/VHS 01 Effect.mp4",
+      "blendMode": "overlay",
+      "start": 0,
+      "end": 9,
+      "opacity": 0.3,
+      "scale": 1.0
+    },
+    {
+      "type": "effect",
+      "file": "/root/media-video-maker_project/assets/Arrow Effect.mp4", 
+      "blendMode": "overlay",
+      "start": 1,
+      "end": 4,
+      "opacity": 0.8,
+      "scale": 1.0
+    }
+  ]
+}

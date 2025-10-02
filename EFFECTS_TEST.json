@@ -1,0 +1,58 @@
+{
+  "files": [
+    {
+      "id": "test1",
+      "src": "/root/video_factory/prepared/crime1.jpg",
+      "type": "photo",
+      "durationSec": 5.0
+    },
+    {
+      "id": "test2", 
+      "src": "/root/video_factory/prepared/crime2.jpg",
+      "type": "photo",
+      "durationSec": 5.0
+    }
+  ],
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "durationPerPhoto": 5.0,
+  "outputFormat": "mp4",
+  "timeline": {
+    "base": [
+      {
+        "type": "video",
+        "file": "[автосгенерированный слайдшоу]"
+      }
+    ],
+    "overlays": [
+      {
+        "type": "effect",
+        "file": "/root/media-video-maker_project/assets/VHS 01 Effect.mp4",
+        "blendMode": "overlay",
+        "start": 0,
+        "end": 10,
+        "opacity": 0.1,
+        "scale": 1.0
+      },
+      {
+        "type": "effect",
+        "file": "/root/media-video-maker_project/assets/VHS 02 Effect.mp4",
+        "blendMode": "overlay",
+        "start": 3,
+        "end": 10,
+        "opacity": 0.2,
+        "scale": 1.0
+      },
+      {
+        "type": "effect",
+        "file": "/root/media-video-maker_project/assets/overlay_arrow.mov",
+        "blendMode": "overlay",
+        "start": 2,
+        "end": 4,
+        "opacity": 0.8,
+        "scale": 1.0
+      }
+    ]
+  }
+}

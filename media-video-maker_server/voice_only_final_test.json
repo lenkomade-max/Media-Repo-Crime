@@ -1,0 +1,22 @@
+{
+  "files": [
+    {
+      "id": "test_photo",
+      "src": "/app/assets/downloads/images/crime1.jpg",
+      "type": "photo",
+      "durationSec": 8
+    }
+  ],
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "outputFormat": "mp4",
+  "ttsText": "Testing voice only no music",
+  "tts": {
+    "provider": "kokoro",
+    "voice": "en_male_2",
+    "format": "mp3",
+    "speed": 1.0,
+    "endpoint": "http://localhost:8083/synthesize"
+  }
+}

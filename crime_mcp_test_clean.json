@@ -1,0 +1,73 @@
+{
+  "files": [
+    {
+      "id": "crime_1",
+      "src": "/app/assets/downloads/images/crime1.jpg",
+      "type": "photo",
+      "durationSec": 3
+    },
+    {
+      "id": "crime_2", 
+      "src": "/app/assets/downloads/images/crime2.jpg",
+      "type": "photo",
+      "durationSec": 3
+    },
+    {
+      "id": "crime_3",
+      "src": "/app/assets/downloads/images/crime3.jpg", 
+      "type": "photo",
+      "durationSec": 3
+    }
+  ],
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "outputFormat": "mp4",
+  "durationPerPhoto": 2.0,
+  "music": "/app/assets/downloads/images/crime_music.mp3",
+  "tts": {
+    "provider": "openai",
+    "voice": "alloy",
+    "format": "mp3",
+    "speed": 1.0
+  },
+  "ttsText": "Хроника криминальных событий. Загадочное происшествие потрясло город. Детектив расследует улики и выходит на след преступника.",
+  "transcribeAudio": true,
+  "burnSubtitles": true,
+  "subtitleStyle": {
+    "fontSize": 32,
+    "fontColor": "white",
+    "backgroundColor": "black",
+    "position": "bottom"
+  },
+  "overlays": [
+    {
+      "type": "text",
+      "target": "top",
+      "text": "КРИМИНАЛЬНАЯ ХРОНИКА",
+      "start": 0,
+      "end": 9,
+      "position": {
+        "x": 540,
+        "y": 100,
+        "anchor": "top"
+      },
+      "style": {
+        "fontSize": 48,
+        "color": "yellow",
+        "fontWeight": "bold"
+      }
+    }
+  ],
+  "effects": [
+    {
+      "kind": "zoom",
+      "params": {
+        "startScale": 1.0,
+        "endScale": 1.2,
+        "cx": 0.5,
+        "cy": 0.5
+      }
+    }
+  ]
+}

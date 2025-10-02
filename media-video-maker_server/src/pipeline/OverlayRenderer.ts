@@ -160,7 +160,7 @@ export async function buildVideoOverlayFilter(
     const expr =
       `drawtext=fontfile='${fontFile}':textfile='${textFile}':fontsize=${size}:fontcolor=${fontcolor}:` +
       `box=1:boxcolor=${bg}:boxborderw=${Math.max(2, borderRadius/4)}:borderw=${outline}:` +
-      `x=${x}:y=${y}${animExpr}:enable=between(t,${start},${end})`;
+      `x=${x}:y=${y}${animExpr}:enable='between(t,${start},${end})'`;
     
     chains.push(`${current}${expr}${out}`);
     current = out;

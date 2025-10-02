@@ -1,0 +1,70 @@
+{
+  "files": [
+    {
+      "id": "test_img",
+      "src": "https://via.placeholder.com/800x600/FF0000/FFFFFF?text=Test1",
+      "type": "photo",
+      "download": true,
+      "durationSec": 3
+    },
+    {
+      "id": "test_img2", 
+      "src": "https://via.placeholder.com/800x600/00FF00/FFFFFF?text=Test2",
+      "type": "photo",
+      "download": true,
+      "durationSec": 3
+    }
+  ],
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "outputFormat": "mp4",
+  "durationPerPhoto": 2.0,
+  "music": "https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3",
+  "musicDownload": true,
+  "tts": {
+    "provider": "kokoro",
+    "voice": "en_male_2",
+    "format": "mp3",
+    "speed": 1.0,
+    "text": "Это диагностический тест Media Video Maker для проверки озвучки и субтит."
+  },
+  "transcribeAudio": true,
+  "burnSubtitles": true,
+  "subtitleStyle": {
+    "fontSize": 32,
+    "fontColor": "white",
+    "backgroundColor": "black",
+    "position": "bottom"
+  },
+  "overlays": [
+    {
+      "type": "text",
+      "target": "top",
+      "text": "DIAGNOSIS TEST",
+      "start": 0,
+      "end": 6,
+      "position": {
+        "x": 540,
+        "y": 100,
+        "anchor": "top"
+      },
+      "style": {
+        "fontSize": 48,
+        "color": "white",
+        "fontWeight": "bold"
+      }
+    }
+  ],
+  "effects": [
+    {
+      "kind": "zoom",
+      "params": {
+        "startScale": 1.0,
+        "endScale": 1.2,
+        "cx": 0.5,
+        "cy": 0.5
+      }
+    }
+  ]
+}

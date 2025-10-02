@@ -1,0 +1,26 @@
+{
+  "files": [
+    {
+      "id": "test_photo",
+      "src": "/app/assets/downloads/images/crime1.jpg",
+      "type": "photo",
+      "durationSec": 5
+    }
+  ],
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "outputFormat": "mp4",
+  "durationPerPhoto": 2.0,
+  "music": "/app/assets/downloads/images/crime_music.mp3",
+  "ttsText": "Test text for TTS debugging - should create voice file",
+  "tts": {
+    "provider": "kokoro",
+    "voice": "en_male_2",
+    "format": "mp3",
+    "speed": 1.0,
+    "endpoint": "http://localhost:8083/synthesize"
+  },
+  "transcribeAudio": false,
+  "burnSubtitles": false
+}

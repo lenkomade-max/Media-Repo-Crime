@@ -12,7 +12,6 @@ import { buildAudioFilter } from "../audio/AudioMixer.js";
 import { buildVideoOverlayFilter } from "./OverlayRenderer.js";
 import { log } from "../logger.js";
 import { FileDownloader } from "../utils/FileDownloader.js";
-import { createCrimeVideo, validateCrimeMaterials, CRIME_DEFAULTS } from "../config/CrimeDefaults.js";
 
 const uuidv4 = uuid.v4;
 
@@ -42,41 +41,6 @@ export default class MediaCreator {
    * @param images - количество изображений (по умолчанию 30)
    * @param duration - общая длительность в секундах
    */
-  async createCrimeVideo(
-    script: string,
-    hookText?: string,
-    baitText?: string,
-    images?: number,
-    duration?: number
-  ): Promise<string> {
-    log.info("🎬 Создание идеального криминального видео...");
-    
-    // Валидируем Crime Materials
-    const materialsOk = await validateCrimeMaterials();
-    if (!materialsOk) {
-      throw new Error("❌ Crime Materials не найдены на сервере!");
-    }
-    
-    // Создаем план с правильными настройками
-    const crimePlan = createCrimeVideo(
-      images || 30,
-      duration || 60,
-      script,
-      hookText,
-      baitText
-    );
-    
-    log.info(`📋 План создан: ${images || 30} изображений, ${duration || 60} секунд`);
-    log.info(`🎵 Музыка: ${CRIME_DEFAULTS.paths.musicPath}`);
-    log.info(`🎭 Озвучка: ${script.length} символов`);
-    log.info(`📺 Эффекты: VHS + Arrow + Zoom`);
-    
-    // Добавляем задачу в очередь
-    const jobId = this.enqueue(crimePlan);
-    
-    log.info(`✅ Задача создана с ID: ${jobId}`);
-    return jobId;
-  }
   
   // Новые методы для API
   getAllJobs(limit = 20, offset = 0) {
@@ -256,6 +220,7 @@ export default class MediaCreator {
       musicInLabel: hasMusic ? `[${musicIndex}:a]` : "",
       voiceInLabel: hasVoice ? `[${voiceIndex}:a]` : "",
     });
+    log.info(`Audio debug: audioChain="${audioChain}", audioFinalLabel="${audioFinalLabel}"`);
 
     // Объединяем видео и аудио фильтры
     const allFilters = [];
@@ -274,6 +239,7 @@ export default class MediaCreator {
     }
 
     // Маппинг аудио
+    log.info(`Audio mapping: hasMusic=${hasMusic}, hasVoice=${hasVoice}, audioFinalLabel=${audioFinalLabel}`);
     if (audioFinalLabel) {
       if (audioFinalLabel.includes(":")) {
         args.push("-map", audioFinalLabel);
