@@ -1,0 +1,130 @@
+{
+  "files": [
+    {
+      "id": "img1",
+      "src": "/root/CRIME MATERIAL/image_5656pit_202508160044 (10).jpeg",
+      "type": "photo"
+    },
+    {
+      "id": "img2", 
+      "src": "/root/CRIME MATERIAL/image_5656pit_202508160044 (11).jpeg",
+      "type": "photo"
+    },
+    {
+      "id": "img3",
+      "src": "/root/CRIME MATERIAL/image_5656pit_202508160044 (12).jpeg", 
+      "type": "photo"
+    },
+    {
+      "id": "img4",
+      "src": "/root/CRIME MATERIAL/image_5656pit_202508160044 (13).jpeg",
+      "type": "photo"
+    },
+    {
+      "id": "img5",
+      "src": "/root/CRIME MATERIAL/image_5656pit_202508160044 (14).jpeg",
+      "type": "photo"
+    },
+    {
+      "id": "img6",
+      "src": "/root/CRIME MATERIAL/image_5656pit_202508160044 (15).jpeg",
+      "type": "photo"
+    },
+    {
+      "id": "img7",
+      "src": "/root/CRIME MATERIAL/image_5656pit_202508160044 (16).jpeg",
+      "type": "photo"
+    },
+    {
+      "id": "img8",
+      "src": "/root/CRIME MATERIAL/image_5656pit_202508160044 (17).jpeg",
+      "type": "photo"
+    },
+    {
+      "id": "img9",
+      "src": "/root/CRIME MATERIAL/image_5656pit_202508160044 (18).jpeg",
+      "type": "photo"
+    },
+    {
+      "id": "img10",
+      "src": "/root/CRIME MATERIAL/image_5656pit_202508160044 (19).jpeg",
+      "type": "photo"
+    }
+  ],
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "durationPerPhoto": 2.0,
+  "outputFormat": "mp4",
+  "music": "/root/CRIME MATERIAL/5bd0ce7d8fca398.mp3",
+  "musicVolumeDb": -6,
+  "ducking": {
+    "enabled": true,
+    "threshold": 0.05,
+    "ratio": 8,
+    "attack": 5,
+    "release": 250,
+    "musicDuckDb": 8
+  },
+  "tts": {
+    "provider": "kokoro",
+    "text": "This is a comprehensive test video with all features enabled. We have background music with ducking, voiceover, automatic subtitles, text overlays, and zoom effects. Each photo is displayed for exactly two seconds, and the total video length matches the voiceover duration. The system processes everything automatically including audio mixing, subtitle generation, and video effects.",
+    "voice": "en_male_2",
+    "format": "wav"
+  },
+  "transcribeAudio": true,
+  "burnSubtitles": true,
+  "subtitleStyle": {
+    "fontSize": 24,
+    "fontColor": "white",
+    "backgroundColor": "black",
+    "position": "bottom"
+  },
+  "overlays": [
+    {
+      "type": "text",
+      "text": "FULL FEATURES TEST",
+      "position": {
+        "x": 0,
+        "y": 50,
+        "anchor": "top"
+      },
+      "target": "top",
+      "start": 0,
+      "end": 20,
+      "style": {
+        "fontSize": 48,
+        "fontColor": "yellow",
+        "backgroundColor": "red",
+        "fontFamily": "Arial"
+      }
+    },
+    {
+      "type": "text", 
+      "text": "Music + Voice + Subtitles + Effects",
+      "position": {
+        "x": 0,
+        "y": 50,
+        "anchor": "bottom"
+      },
+      "target": "bottom",
+      "start": 0,
+      "end": 25,
+      "style": {
+        "fontSize": 32,
+        "fontColor": "white",
+        "backgroundColor": "blue",
+        "fontFamily": "Arial"
+      }
+    }
+  ],
+  "effects": [
+    {
+      "kind": "zoom",
+      "params": {
+        "startScale": 1.0,
+        "endScale": 1.2
+      }
+    }
+  ]
+}

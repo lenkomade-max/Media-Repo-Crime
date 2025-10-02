@@ -1,0 +1,105 @@
+{
+  "files": [
+    {
+      "id": "img1",
+      "src": "/root/CRIME MATERIAL/image_5656pit_202508160044 (10).jpeg",
+      "type": "photo"
+    },
+    {
+      "id": "img2", 
+      "src": "/root/CRIME MATERIAL/image_5656pit_202508160044 (11).jpeg",
+      "type": "photo"
+    },
+    {
+      "id": "img3",
+      "src": "/root/CRIME MATERIAL/image_5656pit_202508160044 (12).jpeg", 
+      "type": "photo"
+    },
+    {
+      "id": "img4",
+      "src": "/root/CRIME MATERIAL/image_5656pit_202508160044 (13).jpeg",
+      "type": "photo"
+    },
+    {
+      "id": "img5",
+      "src": "/root/CRIME MATERIAL/image_5656pit_202508160044 (14).jpeg",
+      "type": "photo"
+    }
+  ],
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "durationPerPhoto": 2.0,
+  "outputFormat": "mp4",
+  "music": "/root/media-video-maker_project/assets/background_music.mp3",
+  "musicVolumeDb": -6,
+  "ducking": {
+    "enabled": true,
+    "threshold": 0.05,
+    "ratio": 8,
+    "attack": 5,
+    "release": 250,
+    "musicDuckDb": 8
+  },
+  "tts": {
+    "provider": "kokoro",
+    "text": "This is a test video with all features enabled. We have background music, voiceover, subtitles, and text overlays. Each photo will be displayed for exactly two seconds, and the total video length will match the voiceover duration.",
+    "voice": "en_male_2",
+    "format": "wav"
+  },
+  "transcribeAudio": true,
+  "burnSubtitles": true,
+  "subtitleStyle": {
+    "fontSize": 24,
+    "fontColor": "white",
+    "backgroundColor": "black",
+    "position": "bottom"
+  },
+  "overlays": [
+    {
+      "type": "text",
+      "text": "FULL FEATURES TEST",
+      "position": {
+        "x": 0,
+        "y": 50,
+        "anchor": "top"
+      },
+      "target": "top",
+      "start": 0,
+      "end": 10,
+      "style": {
+        "fontSize": 48,
+        "fontColor": "yellow",
+        "backgroundColor": "red",
+        "fontFamily": "Arial"
+      }
+    },
+    {
+      "type": "text", 
+      "text": "Background Music + Voiceover + Subtitles",
+      "position": {
+        "x": 0,
+        "y": 50,
+        "anchor": "bottom"
+      },
+      "target": "bottom",
+      "start": 0,
+      "end": 15,
+      "style": {
+        "fontSize": 32,
+        "fontColor": "white",
+        "backgroundColor": "blue",
+        "fontFamily": "Arial"
+      }
+    }
+  ],
+  "effects": [
+    {
+      "kind": "zoom",
+      "params": {
+        "startScale": 1.0,
+        "endScale": 1.2
+      }
+    }
+  ]
+}

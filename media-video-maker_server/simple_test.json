@@ -1,0 +1,27 @@
+{
+  "files": [
+    {
+      "id": "img1",
+      "src": "/root/CRIME MATERIAL/image_5656pit_202508160044 (10).jpeg",
+      "type": "photo"
+    },
+    {
+      "id": "img2", 
+      "src": "/root/CRIME MATERIAL/image_5656pit_202508160044 (11).jpeg",
+      "type": "photo"
+    }
+  ],
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "durationPerPhoto": 2.0,
+  "outputFormat": "mp4",
+  "tts": {
+    "provider": "kokoro",
+    "text": "Simple test video with two photos and voiceover.",
+    "voice": "en_male_2",
+    "format": "wav"
+  },
+  "transcribeAudio": true,
+  "burnSubtitles": true
+}
