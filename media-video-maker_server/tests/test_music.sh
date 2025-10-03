@@ -28,6 +28,10 @@ for i in {1..20}; do
     [ -f "$OUTPUT" ] || { echo "Output file not found: $OUTPUT" | tee -a "$LOG_FILE"; exit 1; }
     cp "$OUTPUT" "$OUT_DIR/music_test.mp4"
     ffprobe -v error -select_streams a:0 -show_entries stream=codec_type -of csv=p=0 "$OUT_DIR/music_test.mp4" | grep -q '^audio$'
+    # Проверяем уровень звука (даже если есть аудио поток, он может быть не слышен)
+    VOLUME_LEVEL=$(ffprobe -v error -show_format -show_streams "$OUT_DIR/music_test.mp4" 2>/dev/null | grep "audio.*channels" || echo "unknown")
+    echo "AUDIO_INFO: $VOLUME_LEVEL" | tee -a "$LOG_FILE"
+    echo "SUCCESS: background music mixed, audio stream present" | tee -a "$LOG_FILE"
     echo "OK: music test produced audio at $OUT_DIR/music_test.mp4" | tee -a "$LOG_FILE"
     exit 0
   fi

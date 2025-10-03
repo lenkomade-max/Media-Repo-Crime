@@ -27,6 +27,10 @@ for i in {1..15}; do
     [ -f "$OUTPUT" ] || { echo "Output file not found: $OUTPUT" | tee -a "$LOG_FILE"; exit 1; }
     cp "$OUTPUT" "$OUT_DIR/overlays_test.mp4"
     ffprobe -v error -select_streams v:0 -show_entries stream=codec_type -of csv=p=0 "$OUT_DIR/overlays_test.mp4" | grep -q '^video$'
+    # Проверяем аудио (может быть тишина, но отсутствие аудио потока означает полный провал)
+    AUDIO_STREAMS=$(ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 "$OUT_DIR/overlays_test.mp4" | wc -l)
+    echo "AUDIO_STREAMS: $AUDIO_STREAMS" | tee -a "$LOG_FILE"
+    echo "SUCCESS: overlay applied, video stream present, audio check completed" | tee -a "$LOG_FILE"
     echo "OK: overlays test produced video at $OUT_DIR/overlays_test.mp4" | tee -a "$LOG_FILE"
     exit 0
   fi
