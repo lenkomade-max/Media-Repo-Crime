@@ -4,7 +4,7 @@
 
 ### 1. **Обязательные файлы для скачивания:**
 ```
-media-video-maker_server/kokoro-v1.0.onnx  (310MB)
+media-video-maker_server/kokoro_tss_server.py (Kokoro TTS API сервер)
 media-video-maker_server/voices-v1.0.bin   (веса для TTS)
 ```
 
@@ -31,7 +31,7 @@ npm run dev  # или npm start
   "files": [{"id": "img1", "src": "image.jpg", "type": "image"}],
   "width": 1080, "height": 1920, "fps": 30,
   "music": "music.mp3",
-  "tts": {"provider": "kokoro", "text": "Текст"},
+  "tts": {"provider": "kokoro", "text": "Текст", "endpoint": "http://178.156.142.35:11402/v1/tts"},
   "transcribeAudio": true,
   "burnSubtitles": true,
   "overlays": [{"type": "text", "text": "Заголовок"}],
@@ -86,7 +86,7 @@ npm run dev  # или npm start
 - `assets/downloads/` - скачанные файлы (автоочистка)
 
 ### 10. **Проблемы:**
-- Нет `kokoro-v1.0.onnx` → скачать модель
+- Kokoro TTS не работает → запустить `python3 kokoro_tss_server.py`
 - FFmpeg ошибка → проверить установку
 - Порт занят → изменить в `src/index.ts` (REST: 4123, MCP: 5123)
 - Ошибки скачивания → проверить URL, MIME-типы, размеры файлов

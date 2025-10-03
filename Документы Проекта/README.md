@@ -12,7 +12,7 @@ npm install
 
 ### 2. Скачать недостающие файлы
 **ВАЖНО:** Скачайте недостающие файлы:
-- `kokoro-v1.0.onnx` (310MB) - модель TTS Kokoro
+- `kokoro_tss_server.py` - Kokoro TTS API сервер на порту 11402
 - `voices-v1.0.bin` - веса для Kokoro TTS
 
 Поместите их в папку `media-video-maker_server/`
@@ -61,6 +61,8 @@ npm start
   "music": "path/to/music.mp3",
   "tts": {
     "provider": "kokoro",
+    "endpoint": "http://178.156.142.35:11402/v1/tts",
+    "voice": "en-US-Standard-A",
     "text": "Текст для озвучки"
   },
   "transcribeAudio": true,
@@ -180,8 +182,8 @@ media-video-maker_server/
 
 ## 🐛 Решение проблем
 
-### Ошибка "kokoro-v1.0.onnx not found"
-Скачайте файл модели и поместите в `media-video-maker_server/`
+### Ошибка "Kokoro TTS не готов"
+Запустите Kokoro сервер: `python3 kokoro_tss_server.py`
 
 ### Ошибка FFmpeg
 Убедитесь что FFmpeg установлен: `ffmpeg -version`
