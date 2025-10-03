@@ -9,11 +9,11 @@ API="http://127.0.0.1:4123"
 mkdir -p "$OUT_DIR" "$(dirname "$LOG_FILE")"
 
 # Minimal plan with burnSubtitles=true and a dummy voice track disabled
-PLAN=$(jq -n --arg img "$INPUT_IMAGE" '{
+PLAN=$(jq -n --arg img "/root/media-video-maker_project/media-video-maker_server/test_image.jpg" '{
   files: [ { id: "img1", src: $img, type: "image" } ],
   width: 640, height: 360, fps: 24, durationPerPhoto: 2.0,
   transcribeAudio: false, burnSubtitles: true,
-  overlays: [ { type: "text", text: "Тест субтитров", position: "bottom-center", start: 0, end: 1.5 } ]
+  overlays: [ { type: "text", text: "Test Subtitle", position: "bottom-center", start: 0, end: 1.5, fontSize: 24, fontColor: "white" } ]
 }')
 
 JOB=$(curl -fsS -X POST "$API/api/create-video" -H 'Content-Type: application/json' -d "$PLAN" | jq -r '.id // .jobId // empty')

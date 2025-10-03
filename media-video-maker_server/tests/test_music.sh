@@ -3,7 +3,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 OUT_DIR="$ROOT_DIR/tests/output"
 LOG_FILE="$ROOT_DIR/logs/music.log"
-INPUT_IMAGE="$ROOT_DIR/test_image.jpg"
+INPUT_IMAGE="/root/media-video-maker_project/media-video-maker_server/test_image.jpg"
 API="http://127.0.0.1:4123"
 
 mkdir -p "$OUT_DIR" "$(dirname "$LOG_FILE")"
