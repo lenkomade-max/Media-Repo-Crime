@@ -1,0 +1,26 @@
+{
+  "files": [
+    {
+      "id": "external_photo",
+      "src": "https://picsum.photos/1080/1920?random=1",
+      "type": "photo",
+      "durationSec": 6
+    }
+  ],
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "outputFormat": "mp4",
+  "durationPerPhoto": 2.0,
+  "music": "/app/assets/downloads/images/crime_music.mp3",
+  "ttsText": "Тестируем исправленное аудио микширование. Это голос должен остаться в видео.",
+  "tts": {
+    "provider": "kokoro",
+    "voice": "en",
+    "format": "mp3",
+    "speed": 1.0,
+    "endpoint": "http://localhost:8083/synthesize"
+  },
+  "transcribeAudio": false,
+  "burnSubtitles": false
+}

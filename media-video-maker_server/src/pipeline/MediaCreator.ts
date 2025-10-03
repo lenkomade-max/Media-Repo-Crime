@@ -239,13 +239,10 @@ export default class MediaCreator {
     }
 
     // Маппинг аудио
-    log.info(`Audio mapping: hasMusic=${hasMusic}, hasVoice=${hasVoice}, audioFinalLabel=${audioFinalLabel}`);
+    log.info(`Audio mapping: hasMusic=${hasMusic}, hasVoice=${hasVoice}, audioFinalLabel="${audioFinalLabel}"`);
     if (audioFinalLabel) {
-      if (audioFinalLabel.includes(":")) {
-        args.push("-map", audioFinalLabel);
-      } else {
-        args.push("-map", `${audioFinalLabel}`);
-      }
+      // Для прямого маппинга без фильтров (например [1:a])
+      args.push("-map", audioFinalLabel);
       args.push("-c:a", "aac", "-b:a", "192k");
     } else if (hasMusic) {
       args.push("-map", `${musicIndex}:a:0`, "-c:a", "aac", "-b:a", "192k");

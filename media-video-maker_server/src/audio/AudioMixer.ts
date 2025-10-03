@@ -49,9 +49,11 @@ export function buildAudioFilter({
   }
 
   if (!hasMusic && hasVoice) {
-    // Маппим напрямую вход голоса (без фильтра_complex)
+    // Маппим напрямую вход голоса БЕЗ filter_complex
+    // Извлекаем номер потока из voiceInLabel (например "[1:a]" -> "1:a:0")
     console.log(`Voice only mode: voiceInLabel="${voiceInLabel}"`);
-    return { chain: "", finalLabel: voiceInLabel };
+    const streamIndex = voiceInLabel.replace(/\[?(\d+):a\]?/, '$1');
+    return { chain: "", finalLabel: `${streamIndex}:a:0` };
   }
 
   return { chain: "", finalLabel: null };
