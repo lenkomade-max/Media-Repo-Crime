@@ -12,14 +12,10 @@ mkdir -p "$OUT_DIR" "$(dirname "$LOG_FILE")"
 PLAN=$(jq -n --arg img "/root/media-video-maker_project/media-video-maker_server/test_image.jpg" '{
   files: [ { id: "img1", src: $img, type: "photo" } ],
   width: 640, height: 360, fps: 24, durationPerPhoto: 2.0,
-  transcribeAudio: false, burnSubtitles: true,
-  overlays: [ { 
-    target: "bottom", 
-    text: "Test Subtitle", 
-    startSec: 0, 
-    endSec: 1.5, 
-    style: { size: 24, color: "white" }
-  } ]
+  transcribeAudio: true,
+  burnSubtitles: true,
+  tts: { provider: "openai", voice: "alloy" },
+  ttsText: "Тестирование субтитров через Whisper транскрипцию аудио"
 }')
 
 JOB=$(curl -fsS -X POST "$API/api/create-video" -H 'Content-Type: application/json' -d "$PLAN" | jq -r '.id // .jobId // empty')
