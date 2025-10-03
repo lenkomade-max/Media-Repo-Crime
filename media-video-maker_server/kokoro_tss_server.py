@@ -14,13 +14,14 @@ app = Flask(__name__)
 # Проверка Kokoro TTS
 try:
     print("✅ Kokoro TTS модуль загружен успешно")
-    # Проверяем доступные голоса
-    voices = list_available_voices()
-    print(f"✅ Доступные голоса: {voices}")
+    # Инициализируем Kokoro для проверки
+    kokoro_manager = Kokoro()
     kokoro_ready = True
+    print("✅ Kokoro TTS готов к работе")
 except Exception as e:
     print(f"❌ Ошибка загрузки Kokoro TTS: {e}")
     kokoro_ready = False
+    kokoro_manager = None
 
 @app.route('/health', methods=['GET'])
 def health():
@@ -34,7 +35,7 @@ def list_voices():
         return jsonify({"error": "Kokoro TTS не готов"}), 500
     
     try:
-        voices = list_available_voices()
+        voices = list_available_voices(kokoro_manager)
         return jsonify({"voices": voices})
     except Exception as e:
         return jsonify({"error": f"Ошибка получения голосов: {e}"}), 500
