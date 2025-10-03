@@ -35,6 +35,7 @@ export const TTSOptionsSchema = z.object({
   pitch: z.number().optional(),
   volume: z.number().optional(),
   download: z.boolean().optional(), // Для внешних TTS файлов
+  text: z.string().optional(), // Текст для озвучки
 });
 export type TTSOptions = z.infer<typeof TTSOptionsSchema>;
 

@@ -8,13 +8,25 @@ API="http://127.0.0.1:4123"
 
 mkdir -p "$OUT_DIR" "$(dirname "$LOG_FILE")"
 
-# Minimal plan with burnSubtitles=true and a dummy voice track disabled
+# REAL SUBTITLES TEST - Kokoro TTS + Whisper transcription + synchronized subtitles
 PLAN=$(jq -n --arg img "/root/media-video-maker_project/media-video-maker_server/test_image.jpg" '{
   files: [ { id: "img1", src: $img, type: "photo" } ],
-  width: 640, height: 360, fps: 24, durationPerPhoto: 2.0,
-  transcribeAudio: false,
+  width: 640, height: 360, fps: 24, durationPerPhoto: 3.0,
+  transcribeAudio: true,
   burnSubtitles: true,
-  subtitleStyle: { FontSize: 24, PrimaryColour: "&HFFFFFF", OutlineColour: "&H000000" }
+  ttsText: "In the dark streets of Baku lived a notorious killer. He fled to America under false identity. Now he walks among us.",
+  tts: {
+    provider: "kokoro",
+    endpoint: "http://localhost:11402/v1/tts",
+    voice: "am_onyx"
+  },
+  subtitleStyle: { 
+    font: "Arial", 
+    size: 24, 
+    color: "#FFFFFF", 
+    outline: { enabled: true, width: 2, color: "#000000" },
+    alignment: "bottom"
+  }
 }')
 
 JOB=$(curl -fsS -X POST "$API/api/create-video" -H 'Content-Type: application/json' -d "$PLAN" | jq -r '.id // .jobId // empty')
