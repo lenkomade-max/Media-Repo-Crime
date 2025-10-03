@@ -5,6 +5,7 @@ import { loadDefaults } from "../config/Defaults.js";
 import { parseColor, toFFColor } from "../utils/color.js";
 import * as Shapes from "./ShapesRenderer.js";
 import { VideoOverlayRenderer } from "./VideoOverlayRenderer.js";
+import { findAvailableFont } from "../utils/FontResolver.js";
 // LUT удалён согласно плану
 
 /**
@@ -23,10 +24,7 @@ export async function buildVideoOverlayFilter(
   const width = input.width ?? defs.canvas.width;
   const height = input.height ?? defs.canvas.height;
   const safe = Math.max(0, Math.min(0.15, defs.canvas.safeAreaPct ?? 0.05));
-  const fontFile =
-    process.env.FONT_FILE ||
-    defs.paths.fontFile ||
-    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
+  const fontFile = await findAvailableFont();
 
   const overlays: Overlay[] = (input.overlays as Overlay[]) || [];
   const chains: string[] = [];

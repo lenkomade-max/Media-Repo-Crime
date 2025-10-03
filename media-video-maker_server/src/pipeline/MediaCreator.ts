@@ -12,6 +12,7 @@ import { buildAudioFilter } from "../audio/AudioMixer.js";
 import { buildVideoOverlayFilter } from "./OverlayRenderer.js";
 import { log } from "../logger.js";
 import { FileDownloader } from "../utils/FileDownloader.js";
+import { ensureOutputDir, getOutputDir } from "../utils/OutputDir.js";
 
 const uuidv4 = uuid.v4;
 
@@ -145,7 +146,13 @@ export default class MediaCreator {
   }
 
   private async process(id: string, input: PlanInput): Promise<{ output: string; srt?: string; vtt?: string }> {
-    const workRoot = process.env.OUTPUT_DIR || "/app/output";
+    // Убеждаемся что OUTPUT_DIR существует и доступен для записи
+    const outputDirInfo = await ensureOutputDir();
+    if (!outputDirInfo.writable) {
+      throw new Error(`OUTPUT_DIR not writable: ${outputDirInfo.path}`);
+    }
+    
+    const workRoot = getOutputDir();
     const workDir = path.join(workRoot, `job_${id}`);
     await fse.ensureDir(workDir);
 
@@ -176,9 +183,9 @@ export default class MediaCreator {
     if (processedInput.transcribeAudio && voicePath) {
       try {
         srtPath = await transcribeWithWhisper(voicePath, workDir, "base");
-        console.log(`🎤 Whisper: создан ${srtPath}`);
+        log.info(`✅ MediaCreator: Whisper successful, subtitles: ${srtPath}`);
       } catch (e: any) {
-        console.error("Ошибка Whisper:", e.message);
+        log.error(`❌ MediaCreator: Whisper failed: ${e.message}`);
         throw new Error(`Whisper failed: ${e?.message || e}`);
       }
     }

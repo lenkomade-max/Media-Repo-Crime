@@ -2,6 +2,9 @@ import express from "express";
 import MediaCreator from "./pipeline/MediaCreator.js";
 import { PlanInputSchema } from "./types/plan.js";
 import { log } from "./logger.js";
+import { getFontInfo, diagnoseAllFonts } from "./utils/FontResolver.js";
+import { checkOutputDir } from "./utils/OutputDir.js";
+import { execa } from "execa";
 
 const app = express();
 const media = new MediaCreator();
@@ -43,33 +46,224 @@ app.get("/api/ping", (_req, res) => {
 });
 
 // Получение информации о поддерживаемых форматах и параметрах
-app.get("/api/capabilities", (_req, res) => {
-  res.json({
-    supportedFormats: {
-      input: ["jpg", "jpeg", "png", "webp", "mp4", "mov", "avi", "mkv"],
-      output: ["mp4", "mov"]
-    },
-    tts: {
-      providers: ["kokoro", "openai", "none"],
-      voices: ["alloy", "echo", "fable", "onyx", "nova", "shimmer"],
-      models: ["gpt-4o-mini-tts", "tts-1", "tts-1-hd"],
-      formats: ["mp3", "wav"]
-    },
-    effects: {
-      zoom: { enabled: true, description: "Плавное масштабирование с центром" },
-      vhs: { enabled: true, description: "Винтажный VHS эффект" },
-      retro: { enabled: true, description: "Ретро стилизация" },
-      custom: { enabled: true, description: "Произвольные FFmpeg фильтры" }
-    },
-    limits: {
-      maxFiles: 50,
-      maxDurationMinutes: 30,
-      maxFileSizeMB: 100,
-      maxResolution: "4K"
+app.get("/api/capabilities", async (_req, res) => {
+  try {
+    // Базовые возможности
+    const capabilities: any = {
+      version: "2.1-main",
+      supportedFormats: {
+        input: ["jpg", "jpeg", "png", "webp", "mp4", "mov", "avi", "mkv"],
+        output: ["mp4", "mov"]
+      },
+      tts: {
+        providers: ["kokoro", "openai", "none"],
+        voices: ["alloy", "echo", "fable", "onyx", "nova", "shimmer"],
+        models: ["gpt-4o-mini-tts", "tts-1", "tts-1-hd"],
+        formats: ["mp3", "wav"]
+      },
+      effects: {
+        zoom: { enabled: true, description: "Плавное масштабирование с центром" },
+        vhs: { enabled: true, description: "Винтажный VHS эффект" },
+        retro: { enabled: true, description: "Ретро стилизация" },
+        custom: { enabled: true, description: "Произвольные FFmpeg фильтры" }
+      },
+      limits: {
+        maxFiles: 50,
+        maxDurationMinutes: 30,
+        maxFileSizeMB: 100,
+        maxResolution: "4K"
+      }
+    };
+    
+    // Динамические проверки доступности
+    capabilities.runtime = {};
+    
+    // FFmpeg доступность
+    try {
+      await execa("ffmpeg", ["-version"], { timeout: 3000 });
+      capabilities.runtime.ffmpeg = { available: true, status: "ok" };
+    } catch {
+      capabilities.runtime.ffmpeg = { available: false, status: "error", impact: "Video processing disabled" };
     }
-  });
+    
+    // Whisper доступность
+    try {
+      await execa("whisper", ["--version"], { timeout: 3000 });
+      capabilities.runtime.whisper = { available: true, status: "ok" };
+      capabilities.transcription = { enabled: true, models: ["tiny", "base", "small", "medium", "large"] };
+    } catch {
+      capabilities.runtime.whisper = { available: false, status: "warning", impact: "Transcription disabled" };
+      capabilities.transcription = { enabled: false, reason: "Whisper CLI not available" };
+    }
+    
+    // Шрифты
+    try {
+      const fontInfo = await getFontInfo();
+      capabilities.runtime.fonts = { 
+        available: fontInfo.exists, 
+        selected: fontInfo.path,
+        status: fontInfo.exists ? "ok" : "warning"
+      };
+      capabilities.textOverlays = { 
+        enabled: fontInfo.exists, 
+        reason: fontInfo.exists ? null : "No fonts found" 
+      };
+    } catch {
+      capabilities.runtime.fonts = { available: false, status: "error" };
+      capabilities.textOverlays = { enabled: false, reason: "Font system error" };
+    }
+    
+    // OUTPUT_DIR
+    try {
+      const outputInfo = await checkOutputDir();
+      capabilities.runtime.outputDir = {
+        writable: outputInfo.writable,
+        path: outputInfo.path,
+        status: outputInfo.writable ? "ok" : "error"
+      };
+    } catch {
+      capabilities.runtime.outputDir = { writable: false, status: "error" };
+    }
+    
+    // Общая готовность
+    const isReady = capabilities.runtime.ffmpeg?.available && 
+                   capabilities.runtime.outputDir?.writable &&
+                   capabilities.runtime.fonts?.available;
+                   
+    capabilities.readiness = {
+      ready: isReady,
+      critical: ["ffmpeg", "outputDir", "fonts"],
+      optional: ["whisper"]
+    };
+    
+    res.json(capabilities);
+    
+  } catch (error: any) {
+    log.error(`❌ Capabilities check failed: ${error.message}`);
+    res.status(500).json({
+      error: "Failed to determine system capabilities",
+      message: error.message
+    });
+  }
 });
 
+// Детальная диагностика системы (Задача #26)
+app.get("/api/health", async (_req, res) => {
+  const startTime = Date.now();
+  
+  try {
+    // Базовая информация
+    const health: any = {
+      status: "ok",
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      version: "2.1-main",
+      service: "media-video-maker",
+    };
+    
+    // Система
+    health.system = {
+      node: process.version,
+      platform: process.platform,
+      arch: process.arch,
+      memory: {
+        used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+        total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
+        rss: Math.round(process.memoryUsage().rss / 1024 / 1024),
+        unit: "MB"
+      }
+    };
+    
+    // Проверка OUTPUT_DIR
+    try {
+      const outputDirInfo = await checkOutputDir();
+      health.outputDir = {
+        path: outputDirInfo.path,
+        exists: outputDirInfo.exists,
+        writable: outputDirInfo.writable,
+        permissions: outputDirInfo.permissions,
+        size: outputDirInfo.size,
+        status: outputDirInfo.writable ? "ok" : "error"
+      };
+    } catch (error: any) {
+      health.outputDir = { status: "error", error: error.message };
+    }
+    
+    // Проверка шрифтов
+    try {
+      const fontInfo = await getFontInfo();
+      const allFonts = await diagnoseAllFonts();
+      health.fonts = {
+        selected: fontInfo.path,
+        exists: fontInfo.exists,
+        size: fontInfo.size,
+        available: allFonts.filter(f => f.available).length,
+        total: allFonts.length,
+        status: fontInfo.exists ? "ok" : "warning"
+      };
+    } catch (error: any) {
+      health.fonts = { status: "error", error: error.message };
+    }
+    
+    // Проверка FFmpeg
+    try {
+      const { stdout: ffmpegVersion } = await execa("ffmpeg", ["-version"], { timeout: 5000 });
+      health.ffmpeg = {
+        available: true,
+        version: ffmpegVersion.split('\n')[0],
+        status: "ok"
+      };
+    } catch (error: any) {
+      health.ffmpeg = {
+        available: false,
+        status: "error",
+        error: error.code === 'ENOENT' ? 'FFmpeg not found' : error.message
+      };
+    }
+    
+    // Проверка Whisper
+    try {
+      const { stdout: whisperVersion } = await execa("whisper", ["--version"], { timeout: 5000 });
+      health.whisper = {
+        available: true,
+        version: whisperVersion.trim(),
+        status: "ok"
+      };
+    } catch (error: any) {
+      health.whisper = {
+        available: false,
+        status: "warning",
+        error: error.code === 'ENOENT' ? 'Whisper CLI not found' : error.message
+      };
+    }
+    
+    // Статистика MediaCreator
+    health.mediaCreator = {
+      running: media.queue?.length || 0,
+      // Можно добавить больше статистики когда будет доступно
+      status: "ok"
+    };
+    
+    // Общий статус
+    const hasErrors = Object.values(health).some((component: any) => 
+      component && typeof component === 'object' && component.status === 'error'
+    );
+    
+    health.status = hasErrors ? "degraded" : "ok";
+    health.checkDuration = `${Date.now() - startTime}ms`;
+    
+    res.status(hasErrors ? 503 : 200).json(health);
+    
+  } catch (error: any) {
+    log.error(`❌ Health check failed: ${error.message}`);
+    res.status(500).json({
+      status: "error",
+      timestamp: new Date().toISOString(),
+      error: error.message,
+      checkDuration: `${Date.now() - startTime}ms`
+    });
+  }
+});
 
 // Создание видео из JSON-сценария
 app.post("/api/create-video", async (req, res) => {
