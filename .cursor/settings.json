@@ -1,5 +1,0 @@
-{
-  "cursor.ai.model": "claude-opus-4",
-  "cursor.ai.fallbackModel": "claude-opus-4",
-  "cursor.ai.autoSelect": false
-}

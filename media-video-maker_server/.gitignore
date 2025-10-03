@@ -16,3 +16,7 @@ dist/
 .idea/
 .vscode/
 .env
+
+# Test outputs and logs
+/tests/output/
+/logs/

@@ -1,0 +1,4 @@
+{
+  "cursor.ai.model": "GPT-5-Codex",
+  "cursor.ai.fallbackModel": "GPT-5-Codex",
+}
