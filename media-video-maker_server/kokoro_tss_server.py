@@ -7,37 +7,34 @@ Kokoro TTS HTTP Server
 from flask import Flask, request, jsonify, send_file
 import tempfile
 import os
-import subprocess
-from kokoro_tts import KokoroTTS
+from kokoro_tts import Kokoro, convert_text_to_audio, list_available_voices
 
 app = Flask(__name__)
 
-# Инициализация Kokoro TTS
+# Проверка Kokoro TTS
 try:
-    tts = KokoroTTS()
-    print("✅ Kokoro TTS инициализирован успешно")
+    print("✅ Kokoro TTS модуль загружен успешно")
+    # Проверяем доступные голоса
+    voices = list_available_voices()
+    print(f"✅ Доступные голоса: {voices}")
+    kokoro_ready = True
 except Exception as e:
-    print(f"❌ Ошибка инициализации Kokoro TTS: {e}")
-    tts = None
+    print(f"❌ Ошибка загрузки Kokoro TTS: {e}")
+    kokoro_ready = False
 
 @app.route('/health', methods=['GET'])
 def health():
     """Health check endpoint"""
-    return jsonify({"status": "ok", "provider": "kokoro-tts", "initialized": tts is not None})
+    return jsonify({"status": "ok", "provider": "kokoro-tts", "ready": kokoro_ready})
 
 @app.route('/voices', methods=['GET'])
 def list_voices():
     """Получить список доступных голосов"""
-    if not tts:
-        return jsonify({"error": "Kokoro TTS не инициализирован"}), 500
+    if not kokoro_ready:
+        return jsonify({"error": "Kokoro TTS не готов"}), 500
     
     try:
-        # Kokoro поддерживает разные голоса
-        voices = {
-            "default": {"name": "Default", "language": "en", "gender": "neutral"},
-            "male": {"name": "Male Voice", "language": "en", "gender": "male"},
-            "female": {"name": "Female Voice", "language": "en", "gender": "female"}
-        }
+        voices = list_available_voices()
         return jsonify({"voices": voices})
     except Exception as e:
         return jsonify({"error": f"Ошибка получения голосов: {e}"}), 500
@@ -45,7 +42,7 @@ def list_voices():
 @app.route('/v1/tts', methods=['POST'])
 def text_to_speech():
     """Основной TTS endpoint"""
-    if not tts:
+    if not kokoro_ready:
         return jsonify({"error": "Kokoro TTS недоступен"}), 500
     
     try:
@@ -61,8 +58,8 @@ def text_to_speech():
         with tempfile.NamedTemporaryFile(suffix=f'.{format}', delete=False) as temp_file:
             temp_path = temp_file.name
             
-        # Генерируем речь
-        tts.generate(text, temp_path, voice=voice)
+        # Генерируем речь через функцию
+        convert_text_to_audio(text=text, output_file=temp_path, voice=voice)
         
         return send_file(temp_path, as_attachment=True, 
                        download_name=f'speech.{format}',
