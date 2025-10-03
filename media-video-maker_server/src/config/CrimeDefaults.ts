@@ -1,6 +1,6 @@
 // eslint-disable @typescript-eslint/no-unused-vars
 
-import { StoryboardOptionsSchema } from '../types/storyboard';
+import { StoryboardOptionsSchema } from '../types/storyboard.js';
 
 export const CrimeDefaults = {
   /** 
@@ -51,12 +51,12 @@ export const CrimeDefaults = {
     channels: 2,             // стерео
     sampleRate: 44100        // 44.1 кГц стандартная частота дискретизации
   },
-  
-  tts: {
-    provider: "kokoro",
+    
+    tts: {
+      provider: "kokoro",
     endpoint: "http://178.156.142.35:11402/v1/tts",
     voice: "en-US-Standard-A",
-    format: "wav"
+      format: "wav"
   },
 
   cleanup: {

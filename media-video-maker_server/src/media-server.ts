@@ -20,6 +20,42 @@ app.use((req, res, next) => {
   next();
 });
 
+// Endpoint для приема результатов от Gemini Video Analyzer
+app.post("/api/gemini-results", (req, res) => {
+  try {
+    const { video_id, analysis, timestamp } = req.body;
+    
+    log.info(`📊 Received Gemini analysis for video ${video_id}:`, analysis);
+    
+    // Сохранить результат анализа
+    const fs = require('fs');
+    const path = require('path');
+    const resultPath = path.join(process.env.OUTPUT_DIR || './output', `gemini_analysis_${video_id}.json`);
+    
+    fs.writeFileSync(resultPath, JSON.stringify({
+      video_id,
+      analysis,
+      timestamp,
+      received_at: new Date().toISOString()
+    }, null, 2));
+    
+    log.info(`💾 Analysis saved to: ${resultPath}`);
+    
+    res.json({ 
+      status: 'received', 
+      video_id,
+      timestamp: new Date().toISOString(),
+      message: 'Анализ успешно получен и сохранен!'
+    });
+  } catch (error) {
+    log.error('❌ Error processing Gemini results:', error);
+    res.status(500).json({ 
+      error: 'Internal server error',
+      message: 'Ошибка обработки результатов анализа'
+    });
+  }
+});
+
 // Проверка работоспособности
 app.get("/api/ping", (_req, res) => {
   res.json({ 
