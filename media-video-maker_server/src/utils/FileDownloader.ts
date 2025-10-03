@@ -168,8 +168,9 @@ export class FileDownloader {
       // Создание директории если не существует
       await fs.ensureDir(path.dirname(targetPath));
 
-      // Запись файла
-      const buffer = await response.buffer();
+      // Запись файла (исправлен для встроенного fetch)
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
       await fs.writeFile(targetPath, buffer);
 
       const mimeType = response.headers.get('content-type') || 'unknown';

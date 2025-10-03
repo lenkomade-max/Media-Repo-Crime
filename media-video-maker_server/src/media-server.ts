@@ -239,7 +239,7 @@ app.get("/api/health", async (_req, res) => {
     
     // Статистика MediaCreator
     health.mediaCreator = {
-      running: media.queue?.length || 0,
+      running: media.getPendingCount(),
       // Можно добавить больше статистики когда будет доступно
       status: "ok"
     };
