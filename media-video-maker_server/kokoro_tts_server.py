@@ -42,7 +42,7 @@ def get_voices():
         'details': kokoro.voices
     })
 
-@app.route('/tts/synthesize', methods=['POST'])
+@app.route('/synthesize', methods=['POST'])
 def synthesize():
     data = request.json
     text = data.get('text', '')

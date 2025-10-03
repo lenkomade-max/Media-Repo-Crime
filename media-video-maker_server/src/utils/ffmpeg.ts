@@ -42,3 +42,32 @@ export async function runFFprobe(file: string) {
 export async function ffprobeJson(file: string) {
   return runFFprobe(file);
 }
+
+/** Проверка наличия аудиопотока в видео для TTS валидации */
+export async function checkVideoHasAudio(videoPath: string): Promise<{ hasAudio: boolean; audioStreams: number; details?: string }> {
+  try {
+    const info = await runFFprobe(videoPath);
+    
+    // Ищем аудиостримы
+    const audioStreams = info.streams?.filter((stream: any) => stream.codec_type === 'audio') || [];
+    const hasAudio = audioStreams.length > 0;
+    
+    let details = '';
+    if (hasAudio) {
+      details = audioStreams.map((stream: any) => 
+        `codec=${stream.codec_name}, duration=${stream.duration}s, channels=${stream.channels}`
+      ).join('; ');
+    }
+    
+    log.info(`🔊 Audio check: ${videoPath} - hasAudio=${hasAudio}, streams=${audioStreams.length}${details ? `, details: ${details}` : ''}`);
+    
+    return {
+      hasAudio,
+      audioStreams: audioStreams.length,
+      details: details || undefined
+    };
+  } catch (error: any) {
+    log.error(`🔊 Audio check failed: ${videoPath} - ${error.message}`);
+    return { hasAudio: false, audioStreams: 0, details: `Error: ${error.message}` };
+  }
+}

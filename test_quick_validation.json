@@ -1,0 +1,39 @@
+{
+  "files": [
+    {"id": "test1", "src": "/dev/null", "type": "photo", "durationSec": 1},
+    {"id": "test2", "src": "/dev/null", "type": "photo", "durationSec": 1}
+  ],
+  "width": 640,
+  "height": 360,
+  "fps": 30,
+  "durationPerPhoto": 1,
+  "outputFormat": "mp4",
+  "musicVolumeDb": -8,
+  "ducking": {
+    "enabled": false
+  },
+  "overlays": [
+    {
+      "target": "center",
+      "text": "TTS TEST ✅",
+      "startSec": 0,
+      "endSec": 2,
+      "style": {
+        "size": 32,
+        "color": "#00FF00",
+        "background": "rgba(0,0,0,0.8)",
+        "fontWeight": "bold"
+      }
+    }
+  ],
+  "transcribeAudio": false,
+  "burnSubtitles": false,
+  "tts": {
+    "provider": "kokoro",
+    "endpoint": "http://localhost:8000/synthesize",
+    "voice": "default",
+    "speed": 1.0,
+    "format": "mp3"
+  },
+  "ttsText": "Тест системы медиа видео мейкер. Проверка ТТС и аудиопотока. Все системы работают корректно."
+}

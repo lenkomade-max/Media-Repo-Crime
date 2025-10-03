@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import fse from "fs-extra";
 import * as uuid from "uuid";
-import { runFFmpeg } from "../utils/ffmpeg.js";
+import { runFFmpeg, checkVideoHasAudio } from "../utils/ffmpeg.js";
 import { PlanInput, PlanInputSchema, JobStatus } from "../types/plan.js";
 import { buildSlidesVideo } from "./ConcatPlanBuilder.js";
 import { resolveVoiceTrack } from "../audio/TTSService.js";
@@ -159,7 +159,15 @@ export default class MediaCreator {
     let voicePath: string | null = null;
     try {
       voicePath = await resolveVoiceTrack(processedInput, workDir);
-    } catch {
+      if (voicePath) {
+        log.info(`✅ MediaCreator: TTS successful, audio file: ${voicePath}`);
+      }
+    } catch (error: any) {
+      log.error(`❌ MediaCreator: TTS failed: ${error.message}`);
+      // Важно: не игнорируем TTS ошибки, если TTS требуется
+      if (processedInput.tts && processedInput.tts.provider !== "none" && processedInput.ttsText) {
+        throw new Error(`TTS is required but failed: ${error.message}`);
+      }
       voicePath = null;
     }
 
@@ -257,6 +265,27 @@ export default class MediaCreator {
     args.push(outPath);
 
     await runFFmpeg(args, workDir);
+
+    // Проверка наличия аудиопотока в выходном видео (задача #5 из плана)
+    const audioCheck = await checkVideoHasAudio(outPath);
+    
+    // Если TTS генерировался, но аудио отсутствует — логируем и генерируем автоповтор
+    if (voicePath && !audioCheck.hasAudio) {
+      log.error(`❌ MediaCreator: TTS was generated but output video has no audio stream!`);
+      log.error(`📝 Request dump for retry: ${JSON.stringify({ 
+        id, 
+        tts: processedInput.tts, 
+        ttsText: processedInput.ttsText,
+        voiceFile: voicePath,
+        hasMusic,
+        hasVoice 
+      }, null, 2)}`);
+      
+      // Пока логируем ошибку, в будущем можно добавить автоповтор
+      throw new Error(`Video generated without audio despite TTS success. Check FFmpeg audio mapping.`);
+    } else if (audioCheck.hasAudio && voicePath) {
+      log.info(`✅ MediaCreator: Audio validation passed - ${audioCheck.audioStreams} stream(s): ${audioCheck.details}`);
+    }
 
     // Очистка скачанных файлов после успешного создания видео
     await this.cleanupDownloadedFiles(id);
