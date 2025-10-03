@@ -11,6 +11,8 @@ const media = new MediaCreator();
 
 // Базовые настройки
 app.use(express.json({ limit: "50mb" }));
+// Middleware для обработки text/plain (CORS fix)
+app.use(express.text({ type: 'text/plain' }));
 app.set("trust proxy", true);
 
 // Разрешаем CORS для разработки
@@ -23,7 +25,15 @@ app.use((req, res, next) => {
 // Endpoint для приема результатов от Gemini Video Analyzer
 app.post("/api/gemini-results", (req, res) => {
   try {
-    const { video_id, analysis, timestamp } = req.body;
+    // Обработка как text/plain (CORS fix)
+    let requestData;
+    if (req.headers['content-type'] === 'text/plain') {
+      requestData = JSON.parse(req.body);
+    } else {
+      requestData = req.body;
+    }
+    
+    const { video_id, analysis, timestamp } = requestData;
     
     log.info(`📊 Received Gemini analysis for video ${video_id}:`, analysis);
     
