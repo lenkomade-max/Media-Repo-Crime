@@ -1,230 +1,90 @@
-/**
- * CrimeDefaults - стандартные настройки для криминальных видео
- * Упрощенная версия без сложных типов для быстрой компиляции
- */
+// eslint-disable @typescript-eslint/no-unused-vars
 
-import type { PlanInput } from "../types/plan.js";
-import { resolveAssetPath, getCrimeMaterialDir } from "../utils/AssetsResolver.js";
+import { StoryboardOptionsSchema } from '../types/storyboard';
 
-export interface CrimeDefaultsConfig {
-  paths: {
-    crimeMaterials: string;
-    musicPath: string;
-    vhsEffects: string[];
-    arrowEffects: string[];
-  };
-  video: {
-    width: number;
-    height: number;
-    fps: number;
-    format: string;
-  };
-  audio: {
-    musicVolumeDb: number;
-    voiceVolumeDb: number;
-    ducking: {
-      enabled: boolean;
-      threshold: number;
-      ratio: number;
-      attack: number;
-      release: number;
-      musicDuckDb: number;
-    };
-  };
-  effects: {
-    vhsEnabled: boolean;
-    vhsOpacity: number;
-    arrowEnabled: boolean;
-    zoomEnabled: boolean;
-  };
-  overlays: {
-    hookEnabled: boolean;
-    baitEnabled: boolean;
-    fontSize: {
-      hook: number;
-      bait: number;
-    };
-    colors: {
-      hook: string;
-      bait: string;
-    };
-  };
-}
+export const CrimeDefaults = {
+  /** 
+   * Базовые настройки для преступных видео 
+   * Принимаются на вход в `generateCrimeVideo` и применяются как defaults к каждому файлу
+   */
+  width: 1280,
+  height: 720,
+  fps: 30,
+  durationPerPhoto: 4.0,  // секунды на фото
+  
+  /**
+   * Озвучка:
+   * - если указан voiceFile (например 5bd0ce7d8fca398.mp3), он будет использован как есть
+   * - иначе может использоваться TTS
+   */
+  voiceFile: null as string | null,
+  
+  /**
+   * Субтитры:
+   * - если указан subFile (например crime.md), он будет использован как источник субтитров
+   * - иначе субтитры могут генерироваться из озвучки (transcribeAudio=true) или текста (subtitleText)
+   */
+  subFile: null as string | null,
+  
+  // Допустимые форматы для озвучки: загружаем из внешних файлов
+  supportedAudioFormats: [".mp3", ".wav", ".aac", ".ogg", ".m4a", ".flac", ".mp4", ".avi", ".mov", ".mkv"],
+  
+  subtitleStyle: {
+    FontSize: 24,
+    PrimaryColour: "&HFFFFFF", // белый
+    OutlineColour: "&H000000", // чёрный
+    Bold: true
+  },
+  
+  // Типичные параметры кодирования видео для оптимизации
+  encoding: {
+    format: "libx264",  // H264 для максимальной совместимости
+    preset: "medium",   // баланс скорости/качества
+    crf: 23,           // качество (0=lossless, 23=default, 51=worst)
+    pixfmt: "yuv420p"   // гарантирует совместимость с медиаплеерами
+  },
+  
+  /** Базовые настройки аудио кодирования */
+  audioSettings: {
+    codec: "libmp3lame",     // MP3 кодек для максимальной совместимости 
+    bitrate: "128k",         // 128 кбит/с — хорошее качество для речи и музыки
+    channels: 2,             // стерео
+    sampleRate: 44100        // 44.1 кГц стандартная частота дискретизации
+  },
+  
+  tts: {
+    provider: "kokoro",
+    endpoint: "http://178.156.142.35:11402/v1/tts",
+    voice: "en-US-Standard-A",
+    format: "wav"
+  },
 
-export const CRIME_DEFAULTS: CrimeDefaultsConfig = {
-  paths: {
-    crimeMaterials: "/root/video_factory/prepared/crime",
-    musicPath: "/root/video_factory/prepared/crime_music.mp3",
-    vhsEffects: [
-      resolveAssetPath("VHS 01 Effect.mp4"),
-      resolveAssetPath("VHS 02 Effect.mp4")
-    ],
-    arrowEffects: [
-      resolveAssetPath("Arrow Effect.mp4")
-    ]
+  cleanup: {
+    autoCleanDownloads: true,  // автоматическая очистка скачанных файлов
+    autoCleanOutputs: false,   // НЕ удалять готовые видео автоматически
+    cleanupAfterSec: 3600     // очистка через час после завершения задач
   },
-  video: {
-    width: 1080,
-    height: 1920,
-    fps: 30,
-    format: "mp4"
+
+  /** Webhook уведомления о статусе задач */
+  webhooks: {
+    enabled: false,
+    url: null as string | null,
+    // Можно расширить auth, retry policy и т.д.
   },
-  audio: {
-    musicVolumeDb: -12, // Музыка тише голоса
-    voiceVolumeDb: -6,  // Голос громче музыки
-    ducking: {
-      enabled: true,
-      threshold: 0.05,
-      ratio: 8,
-      attack: 5,
-      release: 250,
-      musicDuckDb: 8
-    }
+  // Дополнительные безопасные defaults
+  concurrentJobs: 3,          // максимум одновременных заданий
+  maxJobDurationSec: 1800,    // 30 минут максимум на задание
+  apiRequestTimeout: 180000,   // 3 минуты timeout для внешних API
+  uploadMaxSize: 10 * 1024 * 1024, // 10MB максимум размер файла
+  
+  /** Источники текста для субтитров и озвучки */
+  textSources: {
+    customText: null as string | null,
+    transcribeAudio: false,   // транскрибировать ли аудиодорожку в субтитры
+    subtitleText: null as string | null,  // явно заданный текст субтитров
   },
-  effects: {
-    vhsEnabled: true,
-    vhsOpacity: 0.1,
-    arrowEnabled: true,
-    zoomEnabled: true
-  },
-  overlays: {
-    hookEnabled: true,
-    baitEnabled: true,
-    fontSize: {
-      hook: 48,
-      bait: 32
-    },
-    colors: {
-      hook: "#FF0000",
-      bait: "#FFFFFF"
-    }
-  }
+
+  // Совместимость со старым интерфейсом: если передаётся только текст,
+  // создаём синтаксически корректную структуру plan  
+  legacyTextFallback: true
 };
-
-/**
- * Создает простой план криминального видео
- */
-export function createCrimeVideo(
-  images: number = 30,
-  duration: number = 60,
-  script: string,
-  hookText: string = "КРИМИНАЛЬНЫЕ ХРОНИКИ",
-  baitText: string = "ЭКСКЛЮЗИВНАЯ ИНФОРМАЦИЯ"
-): PlanInput {
-  const defaults = CRIME_DEFAULTS;
-  
-  // Создаем массив файлов
-  const files = [];
-  for (let i = 1; i <= images; i++) {
-    const photoNum = ((i - 1) % 10) + 1;
-    files.push({
-      id: `crime_${i}`,
-      src: `${defaults.paths.crimeMaterials}${photoNum}.jpg`,
-      type: "photo",
-      durationSec: i <= 10 ? 1.5 : 2.5
-    });
-  }
-  
-  // Простой план без сложных структур
-  return {
-    files: files as any,
-    width: defaults.video.width,
-    height: defaults.video.height,
-    fps: defaults.video.fps,
-    outputFormat: "mp4" as const,
-    durationPerPhoto: 2.5,
-    
-    music: defaults.paths.musicPath,
-    musicVolumeDb: defaults.audio.musicVolumeDb,
-    ducking: defaults.audio.ducking,
-    
-    tts: {
-      provider: "kokoro",
-      voice: "ru_female",
-      format: "wav"
-    } as any,
-    ttsText: script,
-    
-    transcribeAudio: true,
-    burnSubtitles: true,
-    subtitleStyle: {
-      size: 24,
-      color: "white",
-      background: "black"
-    },
-    
-    overlays: [
-      {
-        target: "top",
-        text: hookText,
-        startSec: 0,
-        endSec: duration,
-        style: {
-          size: defaults.overlays.fontSize.hook,
-          color: defaults.overlays.colors.hook,
-          fontWeight: "bold"
-        }
-      },
-      {
-        target: "bottom", 
-        text: baitText,
-        startSec: 0,
-        endSec: duration,
-        style: {
-          size: defaults.overlays.fontSize.bait,
-          color: defaults.overlays.colors.bait
-        }
-      }
-    ] as any,
-    
-    effects: [
-      {
-        kind: "zoom",
-        startSec: 0,
-        endSec: duration,
-        params: {
-          startScale: 1.0,
-          endScale: 1.2,
-          cx: 0.5,
-          cy: 0.5
-        }
-      }
-    ]
-  };
-}
-
-/**
- * Валидирует Crime Materials
- */
-export async function validateCrimeMaterials(): Promise<boolean> {
-  const defaults = CRIME_DEFAULTS;
-  
-  try {
-    const fs = await import('fs/promises');
-    
-    // Проверяем crime1-10.jpg
-    for (let i = 1; i <= 10; i++) {
-      const path = `${defaults.paths.crimeMaterials}${i}.jpg`;
-      try {
-        await fs.access(path);
-      } catch {
-        console.warn(`⚠️ Crime material не найден: ${path}`);
-        return false;
-      }
-    }
-    
-    // Проверяем музыку
-    try {
-      await fs.access(defaults.paths.musicPath);
-    } catch {
-      console.warn(`⚠️ Crime music не найден: ${defaults.paths.musicPath}`);
-      return false;
-    }
-    
-    console.log("✅ Все Crime Materials найдены!");
-    return true;
-  } catch (error) {
-    console.error("❌ Ошибка валидации Crime Materials:", error);
-    return false;
-  }
-}

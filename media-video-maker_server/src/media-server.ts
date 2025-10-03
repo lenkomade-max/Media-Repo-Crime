@@ -57,7 +57,8 @@ app.get("/api/capabilities", async (_req, res) => {
       },
       tts: {
         providers: ["kokoro", "openai", "none"],
-        voices: ["alloy", "echo", "fable", "onyx", "nova", "shimmer"],
+        kokoro_endpoint: "http://178.156.142.35:11402/v1/tts",
+        voices: ["en-US-Standard-A", "en-US-Wavenet-A", "alloy", "echo", "fable", "onyx", "nova", "shimmer"],
         models: ["gpt-4o-mini-tts", "tts-1", "tts-1-hd"],
         formats: ["mp3", "wav"]
       },

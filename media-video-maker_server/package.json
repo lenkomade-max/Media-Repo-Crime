@@ -7,7 +7,9 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/media-server.js",
     "dev": "ts-node --esm src/media-server.ts",
-    "check": "tsc -p tsconfig.json --noEmit"
+    "check": "tsc -p tsconfig.json --noEmit",
+    "diagnostic": "./scripts/diagnostic.sh",
+    "test": "./tests/run_all_tests.sh"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.7.0",
