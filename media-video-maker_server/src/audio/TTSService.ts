@@ -51,11 +51,21 @@ export async function resolveVoiceTrack(input: PlanInput, workDir: string): Prom
 
       log.info(`🎤 Kokoro TTS request: url=${endpoint}, body=${JSON.stringify(body)}`);
       
-      const resp = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+      // TTS запрос с таймаутом и устойчивостью (Fix #7)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 сек таймаут
+      
+      let resp: Response;
+      try {
+        resp = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+          signal: controller.signal
+        });
+      } finally {
+        clearTimeout(timeoutId);
+      }
 
       log.info(`🎤 Kokoro TTS response: status=${resp.status}, ok=${resp.ok}, content-length=${resp.headers.get('content-length') || 'unknown'}`);
 
@@ -97,11 +107,21 @@ export async function resolveVoiceTrack(input: PlanInput, workDir: string): Prom
     const url = `${baseUrl}/audio/speech`;
     log.info(`🎤 OpenAI TTS request: url=${url}, model=${payload.model}, voice=${payload.voice}, input=${payload.input.length}chars`);
 
-    const resp = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-      body: JSON.stringify(payload),
-    });
+    // OpenAI TTS запрос с таймаутом (Fix #7)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 сек таймаут
+    
+    let resp: Response;
+    try {
+      resp = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
     log.info(`🎤 OpenAI TTS response: status=${resp.status}, ok=${resp.ok}, content-length=${resp.headers.get('content-length') || 'unknown'}`);
 
@@ -127,6 +147,20 @@ export async function resolveVoiceTrack(input: PlanInput, workDir: string): Prom
     return outPath;
   } catch (error: any) {
     log.error(`🎤 TTS Error (${Date.now() - startTime}ms): ${error.message}`);
+    
+    // Детальная диагностика ошибки (Fix #7)
+    if (error.name === 'AbortError') {
+      log.error(`🎤 TTS timeout after 30000ms - server may be down or overloaded`);
+    } else if (error.code === 'ECONNREFUSED') {
+      log.error(`🎤 TTS server connection refused - check if server is running`);
+    } else if (error.code === 'ENOTFOUND') {
+      log.error(`🎤 TTS server not found - check endpoint URL`);
+    } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      log.error(`🎤 TTS fetch error - check network connectivity`);
+    } else {
+      log.error(`🎤 TTS unexpected error: ${error.name} - ${error.message}`);
+    }
+    
     throw new Error(`TTS failed: ${error.message}`);
   }
 }

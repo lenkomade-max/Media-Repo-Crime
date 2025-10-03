@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+// Используем встроенный fetch (Node.js 18+) вместо node-fetch
 import fs from 'fs-extra';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';

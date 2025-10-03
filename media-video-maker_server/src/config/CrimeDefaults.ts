@@ -4,6 +4,7 @@
  */
 
 import type { PlanInput } from "../types/plan.js";
+import { resolveAssetPath, getCrimeMaterialDir } from "../utils/AssetsResolver.js";
 
 export interface CrimeDefaultsConfig {
   paths: {
@@ -55,11 +56,11 @@ export const CRIME_DEFAULTS: CrimeDefaultsConfig = {
     crimeMaterials: "/root/video_factory/prepared/crime",
     musicPath: "/root/video_factory/prepared/crime_music.mp3",
     vhsEffects: [
-      "/root/media-video-maker_project/assets/VHS 01 Effect.mp4",
-      "/root/media-video-maker_project/assets/VHS 02 Effect.mp4"
+      resolveAssetPath("VHS 01 Effect.mp4"),
+      resolveAssetPath("VHS 02 Effect.mp4")
     ],
     arrowEffects: [
-      "/root/media-video-maker_project/assets/Arrow Effect.mp4"
+      resolveAssetPath("Arrow Effect.mp4")
     ]
   },
   video: {

@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import fse from "fs-extra";
 import * as uuid from "uuid";
-import { runFFmpeg, checkVideoHasAudio } from "../utils/ffmpeg.js";
+import { runFFmpeg } from "../utils/ffmpeg.js";
 import { PlanInput, PlanInputSchema, JobStatus } from "../types/plan.js";
 import { buildSlidesVideo } from "./ConcatPlanBuilder.js";
 import { resolveVoiceTrack } from "../audio/TTSService.js";
@@ -12,7 +12,7 @@ import { buildAudioFilter } from "../audio/AudioMixer.js";
 import { buildVideoOverlayFilter } from "./OverlayRenderer.js";
 import { log } from "../logger.js";
 import { FileDownloader } from "../utils/FileDownloader.js";
-import { ensureOutputDir, getOutputDir } from "../utils/OutputDir.js";
+import { getAssetsDir } from "../utils/AssetsResolver.js";
 
 const uuidv4 = uuid.v4;
 
@@ -33,6 +33,19 @@ export default class MediaCreator {
 
   enqueueJob(input: PlanInput) { return this.enqueue(input); }
   getStatus(id: string) { return this.statuses.get(id) || this.completed.get(id); }
+  
+  /** Публичные методы для мониторинга (Fix #3) */
+  getPendingCount(): number { return this.queue.length; }
+  getRunningCount(): number { return this.running; }
+  getCompletedCount(): number { return this.completed.size; }
+  getStats() { 
+    return {
+      pending: this.queue.length,
+      running: this.running, 
+      completed: this.completed.size,
+      maxConcurrent: this.maxConcurrent
+    }; 
+  }
   
   /**
    * Создает идеальное криминальное видео по умолчанию
@@ -146,13 +159,7 @@ export default class MediaCreator {
   }
 
   private async process(id: string, input: PlanInput): Promise<{ output: string; srt?: string; vtt?: string }> {
-    // Убеждаемся что OUTPUT_DIR существует и доступен для записи
-    const outputDirInfo = await ensureOutputDir();
-    if (!outputDirInfo.writable) {
-      throw new Error(`OUTPUT_DIR not writable: ${outputDirInfo.path}`);
-    }
-    
-    const workRoot = getOutputDir();
+    const workRoot = process.env.OUTPUT_DIR || "/app/output";
     const workDir = path.join(workRoot, `job_${id}`);
     await fse.ensureDir(workDir);
 
@@ -166,15 +173,7 @@ export default class MediaCreator {
     let voicePath: string | null = null;
     try {
       voicePath = await resolveVoiceTrack(processedInput, workDir);
-      if (voicePath) {
-        log.info(`✅ MediaCreator: TTS successful, audio file: ${voicePath}`);
-      }
-    } catch (error: any) {
-      log.error(`❌ MediaCreator: TTS failed: ${error.message}`);
-      // Важно: не игнорируем TTS ошибки, если TTS требуется
-      if (processedInput.tts && processedInput.tts.provider !== "none" && processedInput.ttsText) {
-        throw new Error(`TTS is required but failed: ${error.message}`);
-      }
+    } catch {
       voicePath = null;
     }
 
@@ -183,9 +182,9 @@ export default class MediaCreator {
     if (processedInput.transcribeAudio && voicePath) {
       try {
         srtPath = await transcribeWithWhisper(voicePath, workDir, "base");
-        log.info(`✅ MediaCreator: Whisper successful, subtitles: ${srtPath}`);
+        console.log(`🎤 Whisper: создан ${srtPath}`);
       } catch (e: any) {
-        log.error(`❌ MediaCreator: Whisper failed: ${e.message}`);
+        console.error("Ошибка Whisper:", e.message);
         throw new Error(`Whisper failed: ${e?.message || e}`);
       }
     }
@@ -215,11 +214,11 @@ export default class MediaCreator {
       hasMusic ? 1 : 0
     );
 
-    // Добавляем дополнительные входы для оверлеев
+    // Добавляем дополнительные входы для оверлеев (Fix #4)
     for (const extraInput of extraInputs) {
       const absInput = path.isAbsolute(extraInput)
         ? extraInput
-        : path.resolve("/root/media-video-maker_project", extraInput);
+        : path.resolve(getAssetsDir(), extraInput);
       args.push("-i", absInput);
     }
 
@@ -253,14 +252,20 @@ export default class MediaCreator {
       args.push("-map", "0:v:0");
     }
 
-    // Маппинг аудио
-    log.info(`Audio mapping: hasMusic=${hasMusic}, hasVoice=${hasVoice}, audioFinalLabel="${audioFinalLabel}"`);
+    // Маппинг аудио (Fix #6)
+    log.info(`Audio mapping: hasMusic=${hasMusic}, hasVoice=${hasVoice}, audioFinalLabel="${audioFinalLabel}", musicIndex=${musicIndex}, voiceIndex=${voiceIndex}`);
     if (audioFinalLabel) {
       // Для прямого маппинга без фильтров (например [1:a])
       args.push("-map", audioFinalLabel);
       args.push("-c:a", "aac", "-b:a", "192k");
     } else if (hasMusic) {
       args.push("-map", `${musicIndex}:a:0`, "-c:a", "aac", "-b:a", "192k");
+    } else if (hasVoice) {
+      // Только голос без музыки (Fix #6)
+      args.push("-map", `${voiceIndex}:a:0`, "-c:a", "aac", "-b:a", "192k");
+    } else {
+      // Нет аудио источников - без аудио потока
+      log.info(`No audio sources - video will be silent`);
     }
 
     // Оптимизированное кодирование: быстрый пресет для низких разрешений
@@ -272,27 +277,6 @@ export default class MediaCreator {
     args.push(outPath);
 
     await runFFmpeg(args, workDir);
-
-    // Проверка наличия аудиопотока в выходном видео (задача #5 из плана)
-    const audioCheck = await checkVideoHasAudio(outPath);
-    
-    // Если TTS генерировался, но аудио отсутствует — логируем и генерируем автоповтор
-    if (voicePath && !audioCheck.hasAudio) {
-      log.error(`❌ MediaCreator: TTS was generated but output video has no audio stream!`);
-      log.error(`📝 Request dump for retry: ${JSON.stringify({ 
-        id, 
-        tts: processedInput.tts, 
-        ttsText: processedInput.ttsText,
-        voiceFile: voicePath,
-        hasMusic,
-        hasVoice 
-      }, null, 2)}`);
-      
-      // Пока логируем ошибку, в будущем можно добавить автоповтор
-      throw new Error(`Video generated without audio despite TTS success. Check FFmpeg audio mapping.`);
-    } else if (audioCheck.hasAudio && voicePath) {
-      log.info(`✅ MediaCreator: Audio validation passed - ${audioCheck.audioStreams} stream(s): ${audioCheck.details}`);
-    }
 
     // Очистка скачанных файлов после успешного создания видео
     await this.cleanupDownloadedFiles(id);

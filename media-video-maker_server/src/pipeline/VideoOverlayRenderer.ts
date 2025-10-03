@@ -2,6 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import type { VideoOverlay, PlanInput } from "../types/plan.js";
 import { log } from "../logger.js";
+import { getAssetsDir } from "../utils/AssetsResolver.js";
 
 /**
  * VideoOverlayRenderer - обработка видео оверлеев с blend modes
@@ -52,10 +53,10 @@ export class VideoOverlayRenderer {
       const overlayInputIndex = extraInputs.length;
       
       // Добавляем overlay файл БЕЗ trim - контролируем через enable в фильтре
-      // Используем абсолютный путь для корректной работы FFmpeg (относительно корня проекта)
+      // Используем абсолютный путь для корректной работы FFmpeg (Fix #4)
       const absolutePath = path.isAbsolute(overlay.file) 
         ? overlay.file 
-        : path.resolve('/root/media-video-maker_project', overlay.file);
+        : path.resolve(getAssetsDir(), overlay.file);
       extraInputs.push(absolutePath);
       
       const out = `[voverlay_${step}]`;
