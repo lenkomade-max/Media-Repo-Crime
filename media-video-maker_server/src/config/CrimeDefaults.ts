@@ -1,6 +1,6 @@
 // eslint-disable @typescript-eslint/no-unused-vars
 
-import { StoryboardOptionsSchema } from '../types/storyboard.js';
+import { StoryboardSchema } from '../types/storyboard.js';
 
 export const CrimeDefaults = {
   /** 
