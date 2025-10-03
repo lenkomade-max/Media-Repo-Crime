@@ -11,7 +11,25 @@ from kokoro_tts import Kokoro
 print("🎤 Инициализация Kokoro TTS для тестирования...")
 
 try:
-    kokoro = Kokoro()
+    # Найденные пути к моделям Kokoro на сервере
+    model_path = "/root/media-video-maker-test/kokoro-v1.0.onnx"
+    voices_path = "/root/media-video-maker/media-video-maker_server/voices-v1.0.bin"
+    
+    print(f"🔍 Ищу модель: {model_path}")
+    print(f"🔍 Ищу голоса: {voices_path}")
+    
+    if os.path.exists(model_path):
+        print(f"✅ Найдена модель: {model_path}")
+    else:
+        print(f"❌ Модель не найдена: {model_path}")
+        
+    if os.path.exists(voices_path):
+        print(f"✅ Найдены голоса: {voices_path}")
+    else:
+        print(f"❌ Голоса не найдены: {voices_path}")
+    
+    # Инициализация с путями
+    kokoro = Kokoro(model_path=model_path, voices_path=voices_path)
     print("✅ Kokoro TTS успешно инициализирован")
     
     # Тестируем базовую функцию
