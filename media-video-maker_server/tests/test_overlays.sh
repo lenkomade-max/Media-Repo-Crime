@@ -9,7 +9,7 @@ API="http://127.0.0.1:4123"
 mkdir -p "$OUT_DIR" "$(dirname "$LOG_FILE")"
 
 PLAN=$(jq -n --arg img "$INPUT_IMAGE" '{
-  files: [ { id: "img1", src: $img, type: "image" } ],
+  files: [ { id: "img1", src: $img, type: "photo" } ],
   width: 640, height: 360, fps: 24, durationPerPhoto: 2.0,
   overlays: [ { type: "text", text: "Overlay", position: "top-left", start: 0, end: 1.0 } ]
 }')

@@ -10,7 +10,7 @@ mkdir -p "$OUT_DIR" "$(dirname "$LOG_FILE")"
 
 # Minimal plan with burnSubtitles=true and a dummy voice track disabled
 PLAN=$(jq -n --arg img "/root/media-video-maker_project/media-video-maker_server/test_image.jpg" '{
-  files: [ { id: "img1", src: $img, type: "image" } ],
+  files: [ { id: "img1", src: $img, type: "photo" } ],
   width: 640, height: 360, fps: 24, durationPerPhoto: 2.0,
   transcribeAudio: false, burnSubtitles: true,
   overlays: [ { type: "text", text: "Test Subtitle", position: "bottom-center", start: 0, end: 1.5, fontSize: 24, fontColor: "white" } ]
