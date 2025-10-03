@@ -14,7 +14,7 @@ if [ -z "${OPENAI_API_KEY:-}" ]; then
 fi
 
 PLAN=$(jq -n --arg img "$INPUT_IMAGE" '{
-  files: [ { id: "img1", src: $img, type: "image" } ],
+  files: [ { id: "img1", src: $img, type: "photo" } ],
   width: 640, height: 360, fps: 24, durationPerPhoto: 2.0,
   tts: { provider: "openai", voice: "alloy" },
   ttsText: "Тест озвучки",
